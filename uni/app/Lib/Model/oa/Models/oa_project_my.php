@@ -1,0 +1,28 @@
+<?php return array(
+'id'=>"oa_project_my",
+'title'=>"我的项目",
+'base'=>"oa_project",
+'tablename'=>"oa_project",
+'filter'=>"SYS_ADDUSER=loginuser() and status<>'' and SYS_ADDUSER<>'' ",
+'orderby'=>"tag desc,id desc",
+'open_window_style'=>"samewindow",
+'pagerows'=>"10",
+'actions'=>"del,search,groupby,export,page",
+'cols'=>"2",
+'sql_after_deleted'=>"delete from oa_task where projectid=recordid()",
+'more'=>"[PUBLIC]",
+'fields'=>array(
+ array('id'=>"id",'name'=>"ID",'fieldtype'=>"int",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"name",'name'=>"项目名称",'forsearch'=>"true",'nullable'=>"false",'prop'=>"OPENRECORD",),
+ array('id'=>"content",'name'=>"项目概述",'fieldtype'=>"string",'type'=>"textarea",'isvisible'=>"false",),
+ array('id'=>"begindate",'name'=>"开始日期",'fieldtype'=>"date",'type'=>"date",'forsearch'=>"true",),
+ array('id'=>"enddate",'name'=>"结束日期",'fieldtype'=>"date",'type'=>"date",'forsearch'=>"true",),
+ array('id'=>"executer",'name'=>"项目经理",),
+ array('id'=>"status",'name'=>"状态",'type'=>"dropdown",'data'=>",plan:计划,doing:执行,done:完成,cancel:取消",),
+ array('id'=>"SYS_ADDUSER",'name'=>"创建者",'fieldtype'=>"string",'length'=>"50",'type'=>"SYS_ADDUSER",'visibleWhenAdd'=>"false",'forsearch'=>"true",),
+ array('id'=>"SYS_ADDTIME",'name'=>"创建日期",'fieldtype'=>"date",'type'=>"date",'defaultdata'=>"today()",'visibleWhenAdd'=>"false",'forsearch'=>"true",'style'=>"text-align:center",),
+ array('id'=>"SYS_ORGID",'name'=>"组织ID",'fieldtype'=>"int",'type'=>"SYS_ORGID",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"tag",'name'=>"标记",'fieldtype'=>"string",'length'=>"50",'type'=>"checkboxlist",'data'=>"star:常用,public:公开",'forsearch'=>"true",),
+),
+
+) ?>

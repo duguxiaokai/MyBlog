@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> <!--dtd协议-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>缺勤统计</title>
+<link href="__PUBLIC__/themes/default/css/common.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/themes/default/css/otherweb.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/auoform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script type="text/javascript" src='__PUBLIC__/js/popup.js'></script>
+<script src="__PUBLIC__/jusaas/js/utils.js"></script>
+  
+<script type="text/javascript">
+var mcssTable,currentdate;
+$(document).ready(function() {
+	if(!isSharePage())
+		createSharingBtn();
+	var myDate = new Date();
+	var year = myDate.getFullYear();
+	var month = myDate.getMonth() + 1;
+	if(month<10)
+		month = '0'+month;
+	var date = myDate.getDate();
+	if(date < 10)
+		date = '0'+date;
+	currentdate = year+'-'+month+'-'+date;
+	$.getJSON("__APP__/Oa/Task/getStaffRecord",{starttime:currentdate,endtime:currentdate},function(result){
+		var field_dealing = [{"type":myshow}];
+		mcssTable=new MCSSTable({tableid:"mcss_table",modelid:"oa_absenteeism",showtitle:true,showRecordActionAtLast:true,special_field_show:field_dealing,data:result});
+		mcssTable.run(afterrun);
+	})
+});
+
+function myshow(fieldValue,record){
+	if(fieldValue=='旷工')
+		return "<font color='red'>"+fieldValue+"</font>";
+	else
+		return "<font color='green'>"+fieldValue+"</font>";
+}
+
+function afterrun(){
+	var h = "<select id='mystaff' onchange='getStaffRecord()'><option value=''>--请选择员工--</option></select> ";
+	$("#mcss_table_action_title").after(h);
+	var h = "<input onchange='checkdate()' style='width:100px' onclick='autoform_selectDate(\"yyyy-MM-dd\")' id='starttime' class='searchInput' placeholder='请选择开始日期'>"+
+	"<input onchange='checkdate()' style='width:100px' onclick='autoform_selectDate(\"yyyy-MM-dd\")' id='endtime' class='searchInput' placeholder='请选择结束日期'>"+
+	"<a href='javascript:void(0)' onclick='getStaffRecord()' value='查看' class='labellink text_asc_btn'>查看</a>";
+	$("#mcss_table_action_sort").after(h);
+	$.getJSON("__APP__/Oa/Task/getAllStaff",function(data){
+		if(data){
+			for(var i = 0;i < data.length;i++){
+				var h = "<option value='"+data[i]['id']+"'>"+data[i]['name']+"</option>";
+				$("#mystaff").append(h);
+			}
+		}
+	})
+}
+
+function checkdate(){
+	var starttime = $("#starttime").val();
+	var endtime = $("#endtime").val();
+	if(starttime && endtime){
+		if(starttime > endtime){
+			alert('开始日期不能大于结束日期');
+			$("#starttime").val(endtime);
+			$("#endtime").val(endtime);
+		}
+	}else{
+		if(endtime > currentdate || starttime > currentdate){
+			$("#starttime").val('');$("#endtime").val('');
+			alert('选择的日期不能大于当前日期!');return;
+		}
+		if(starttime)
+			$("#endtime").val(starttime);
+		else
+			$("#starttime").val(endtime);
+	}
+}
+
+function getStaffRecord(){
+	if(!$("#starttime").val() || !$("#endtime").val()){
+		 $("#starttime").val(currentdate);
+		 $("#endtime").val(currentdate);
+	}
+	$.getJSON("__APP__/Oa/Task/getStaffRecord",{starttime:$("#starttime").val(),endtime:$("#endtime").val(),staffid:$("#mystaff").val()},function(data){
+		mcssTable.params.data = data;
+		mcssTable.reload();
+	})
+}
+</script>
+</head>
+
+<body>
+<div id='mcss_sharingbutton'></div>
+<div class="gukeCon">
+	<table id="mcss_table"></table>
+</div>
+</div>
+<div id='background' class='background'></div><div id='progressBar' class='progressBar'>数据加载中，请稍等...</div>
+</body>
+</html>

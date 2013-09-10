@@ -1,0 +1,298 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=8" />
+<title>发送短信</title>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/themes/yellow1/css/common.css' >
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Landz/css/mail.css' >
+<link href="__PUBLIC__/Landz/css/global.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/Landz/css/right.css" rel="stylesheet" type="text/css" />
+
+<script src="__PUBLIC__/jusaas/js/common.js"></script>
+<script src="__PUBLIC__/td/js/common.js"></script>
+<script src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script src='__PUBLIC__/js/popup.js'></script>
+<script src="__PUBLIC__/js/jquery.js" ></script>
+</head>
+
+<body class='bodyfontsize'>
+<div class="position" id="positionCon"></div>
+
+<div class="gukeCon">	
+    <div class="creright">
+        <div class="crerjyzh">
+			<div id="formdata"></div>
+			<div  style="text-align:center; margin:15px 0">
+			<a href="javascript:void(0)" class='button_list' onclick='submit()' style=" float:none;">
+			<img src="__PUBLIC__/Landz/images/button_ico_21.gif" border="0" style="line-height:25px;">发送短信</a>
+			<!--<input type='button' class='setSubmit'  value='发送短信' onclick='submit()'>-->
+			<a href="javascript:void(0)" onclick='save()' class="hrefcaogao">点此将存到草稿箱</a>
+			<a href='__APP__/Landz/SMS/listSMS/param:table/landz_sms_nosend/' class="hrefcaogao">草稿箱</a>
+			<a href="javascript:void(0)" onclick='countMobile()' class="hrefcaogao">统计今日发送</a>
+			</div>
+			<table id="mcss_table"></table>
+		</div>
+    </div>
+</div>
+<div id='background' class='background'></div><div id='progressBar' class='progressBar'>数据加载中，请稍等...</div>	
+</body>
+</html>
+
+<script type="text/javascript">
+var form1;
+var user;
+var mydate;
+var ck;
+var smslist;
+var cidlist;
+var validate;
+
+var btnselect;
+$(document).ready(function(){
+	s = location.href;
+	var field_dealing=[{'receivers':myshow},{'content':myshow2}];
+	smslist = decodeURI(getParamValue(s,"mobile"));
+	cidlist = decodeURI(getParamValue(s,"cid"));
+	mydate = new Date();
+
+	var mcssTable=new MCSSTable({tableid:"mcss_table",modelid:"landz_sms_sent",homeUrl:"__APP__",showfirst:false,width:'100%',showtitle:true,last_td_name:'操作',showtitle:true,hidecheckbox:true,special_field_show:field_dealing},null,last_td);
+	mcssTable.run();
+
+	$.post("__APP__/Landz/SMS/inisender","",function(data)
+	{
+		user = data;
+		form1=new Autoform('formdata',{modelid:'landz_sms',recordid:'url:KEYFIELD',homeUrl:"__APP__"});
+		form1.run(afterRun);
+	});	
+	
+});
+
+function myshow(fieldvalue,record)
+{
+	if(fieldvalue.length > 20)
+		return fieldvalue.substr(0,20)+"...";
+	else
+		return fieldvalue;
+}
+
+function myshow2(fieldvalue,record)
+{
+	if(fieldvalue.length > 10)
+		return fieldvalue.substr(0,10)+"...";
+	else
+		return fieldvalue;
+}
+
+function last_td(id)
+{
+	return "<input class='daKaiBut' onClick='find_url("+id+")' type='button' value='查看'>";
+}
+function find_url(id)
+{ 
+	var url="__APP__/List/List/viewRecord/model/landz_sms_sent/tablename/landz_sms/id/"+id;
+	ShowIframe(url,500,400,'查看已发短信');
+}
+
+function afterRun()
+{
+	if(smslist){
+		$("#"+form1.getFieldID("receivers")).val(smslist);
+	}
+	if(cidlist)
+		$("#"+form1.getFieldID("cid")).val(cidlist);
+	$("#"+form1.getFieldID("sender")).val(user);
+ 	var h="<a onclick='selectCustomer()' style='cursor:pointer;' class='setbutton'>选择收信人</a>";
+	$("#"+form1.getFieldID("receivers")).after(h);
+
+	h="<a onclick='selectTpl()' style='cursor:pointer;' class='setbutton'>选择模板</a><br /><span id='countWord'><font color='#B57D27'>*您还可以输入70个汉字</font></span>";
+	$("#"+form1.getFieldID("content")).after(h);
+
+	h="　<span><font color='#B57D27'>*(定时发送可为空)</font></span>";
+	$("#"+form1.getFieldID("order_time")).after(h);
+
+	$("#"+form1.getFieldID("content")).keyup(function(){
+		var c=form1.getFieldValue("content");
+		if((70-c.length) < 0){
+			validate = false;
+			$("#countWord").html("<font color='red'>*您已经超出了最大字数范围"+(c.length-70)+"个字符");
+		}else{
+			validate = true;
+			$("#countWord").html("<font color='#B57D27'>*您还可以输入"+(70-c.length)+"个汉字");
+		}
+		
+	})
+	
+}
+
+function checkreceivers(save){
+	var receivers = form1.getFieldValue('receivers');
+	$.post("__APP__/td/Member/checkreceivers",{"receivers":receivers},function(data)
+	{	
+		if(data == 0){
+			alert('用户不存在,请检测后重新输入！');
+			$("#formdata_receivers").focus();
+			$("#formdata_receivers").val('');			
+		}
+		else
+		if (save)
+			form1.save(false);	
+	}); 	
+}
+
+function save()
+{
+	var time = mydate.format("yyyy-MM-dd hh:mm:ss");
+	$("#"+form1.getFieldID("sendtime")).val(time);
+	$("#"+form1.getFieldID("status")).val('0');
+	form1.save(false);//是否保存刷新---false否/true是
+}
+
+
+function submit()
+{
+	var time = mydate.format("yyyy-MM-dd hh:mm:ss");
+	$("#"+form1.getFieldID("sendtime")).val(time); 
+	form1.save(false,sendsms,true);
+}
+function sendsms(id){
+	$.post("__APP__/Landz/SMS/sendmobile",{"smsid":id},function(data)
+	{
+		var warn;
+		if(data == 0){
+			warn="短信发送成功！";
+			form1.setFieldValue('status','1');
+			form1.recordid = id;
+			form1.save(true,null,true);
+		}else{
+			warn="短信发送失败";
+		}
+		alert(warn);
+	}); 
+}
+
+function countMobile(){
+	$.post("__APP__/Landz/SMS/countMobile","",function(data){
+		alert("您今日已发送"+data+"条短信");
+	});
+}
+
+//下面的方法应该写在父窗体中
+function selectCustomer()
+{
+	btnselect = 'smscustomer';
+	ShowIframe("__APP__/Landz/Admin/customer/modelid/landz_sms_customers", 600,430,"选择发信人");
+}
+function selectTpl()
+{
+	btnselect = 'smstpl';
+	ShowIframe("__APP__/Mcss/Model/select/modelid/landz_sms_tpl/selectType/radio", 900,400,"选择短信模板");
+}
+function checktelephone(mobile){
+	  var RegCellPhone = /^([0-9]{11})?$/;
+      falg=mobile.search(RegCellPhone);
+		if (falg==-1){
+           return false;
+        }
+		return true;
+}
+function mcss_SetSelected(arr)
+{
+	if(btnselect == 'smscustomer'){
+		var s='';
+		var k='';
+		for(i in arr)
+		{
+			var arr2=arr[i]['HY_MOBILE'].split(';');
+			
+				for(d in arr2){
+				if(arr2[d]=="")
+					 continue;	
+				var test = arr2[d].indexOf('1');
+				var mobile = arr2[d].substr(test,11);
+				
+				if(!checktelephone(mobile))
+					  continue;
+				else{
+					if (s)
+						s+=",";
+					s+=mobile;
+					if(arr[i]["HY_CN_NAME"])
+						s+="|"+arr[i]["HY_CN_NAME"];
+					 else if(arr[i]["HY_EN_NAME"])
+						s+="|"+arr[i]["HY_EN_NAME"];
+					 else
+						s+="|"+"无名客户";
+						if(k)
+						  k+=",";
+						k+=arr[i]['ID'];
+						break;
+				}
+			}	
+		}
+		$.post("__APP__/Landz/SMS/smsFilter",{"sms":s},function(data){
+			if(data!=0){
+				var receivers = form1.getFieldValue("receivers");
+				var cid = form1.getFieldValue("cid");
+				
+				if(receivers){
+					receivers+=","+data;
+					$("#formdata_receivers").val(receivers);
+					cid+=','+k;
+					$("#formdata_cid").val(cid);
+				}else{
+					$("#formdata_receivers").val(data);
+					$("#formdata_cid").val(k);
+				}
+			}else
+				alert("短信已经发送或格式不正确");
+				
+		});
+		
+	}else{
+		var s = arr[0]['content'];
+		if((70-s.length) < 0){
+			validate = false;
+			$("#countWord").html("<font color='red'>*您已经超出了最大字数范围"+(s.length-70)+"个字符");
+		}else{
+			validate = true;
+			$("#countWord").html("<font color='#B57D27'>*您还可以输入"+(70-s.length)+"个汉字");
+		}
+		//var fid=form1.getFieldID("content");
+		//GE(fid).innerHTML=s;
+		$("#formdata_content").val(s);
+	}
+
+}
+ 
+
+//原型日期函数格式化方法
+Date.prototype.format = function(format) {
+	    /*
+	     * eg:format="YYYY-MM-dd hh:mm:ss";
+	     */
+	    var o = {
+	        "M+" :this.getMonth() + 1, // month
+	        "d+" :this.getDate(), // day
+	        "h+" :this.getHours(), // hour
+	        "m+" :this.getMinutes(), // minute
+	        "s+" :this.getSeconds(), // second
+	        "q+" :Math.floor((this.getMonth() + 3) / 3), // quarter
+	        "S" :this.getMilliseconds()
+	    // millisecond
+	    }
+	 	    if (/(y+)/.test(format)) {
+	        format = format.replace(RegExp.$1, (this.getFullYear() + "")
+	                .substr(4 - RegExp.$1.length));
+	    }
+	 
+	    for ( var k in o) {
+	        if (new RegExp("(" + k + ")").test(format)) {
+	            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k]
+	                    : ("00" + o[k]).substr(("" + o[k]).length));
+	        }
+	    }
+	    return format;
+	}
+</script>

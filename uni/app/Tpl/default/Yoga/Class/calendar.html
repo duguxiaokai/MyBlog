@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Calendar</title>
+<link href='__PUBLIC__/css/common.css' rel='stylesheet' type='text/css'>
+ 
+</head>
+<body>
+<div id='mycalendar'></div>
+ 
+<input type="button" value="OK" class="formbutton" onMouseOut="this.className='formbutton';" onMouseOver="this.className='formbutton_hover';" onClick="saveclassdates();">
+</body>
+<script src="__PUBLIC__/js/jquery.js" type="text/javascript"></script>
+<script src="__PUBLIC__/jusaas/js/common.js"></script>
+<script src="__PUBLIC__/jusaas/calendar/McssCalendar.js"></script>
+<script type="text/javascript">
+var selectedDate=geturlparam("datetimelist");
+selectedDate=selectedDate.replace(/%2C/g,",");
+
+var mccalendar=new McssCalendar({id:'mycalendar',calendartype:'monthweek',hidecurrentdate:true,afterShowCalendarBody: afterShowCalendarBody,onclick:clickdate,lang:"en"});
+mccalendar.run();
+
+function afterShowCalendarBody(cal)
+{
+markselectedTD();
+}
+
+function clickdate(date)
+{
+	var td=$("[title='"+date+"']").get(0);
+	var Arr=selectedDate.split(",");
+
+	if (selectedDate.indexOf(td.title)==-1)
+	{
+		Arr.push(td.title);
+		td.style.cssText ="background-color:red;cursor:pointer;";	
+	}
+	else
+	{
+		for(i=0;i<Arr.length;i++)
+		{
+			if (Arr[i]==td.title)
+			{
+				Arr.shift(td.title);
+				td.style.cssText ="background-color:white;cursor:pointer;";
+			}
+		}
+	}
+	selectedDate=Arr.join();
+	if (selectedDate.substr(0,1)==",")
+		selectedDate=selectedDate.substr(1,selectedDate.length);
+ 
+}
+function markselectedTD()
+{
+	 $(".date_td").each(function (i,td) {
+		if (selectedDate.indexOf(td.title)==-1 || td.title=="")
+		{
+			td.style.cssText ="background-color:white;cursor:pointer;";
+		}
+		else
+		{
+			td.style.cssText ="background-color:red;cursor:pointer;";
+		}
+	});
+}
+
+function saveclassdates()
+{
+if (parent.inputfromPopup)
+	parent.inputfromPopup(selectedDate);
+}
+
+</script>
+

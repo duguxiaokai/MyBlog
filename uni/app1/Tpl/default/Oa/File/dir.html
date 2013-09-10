@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<link rel='stylesheet' type='text/css' href='__PUBLIC__/jusaas/mctree/MCTree_left.css'>
+	<link href='__PUBLIC__/themes/default/css/common.css' rel='stylesheet' type='text/css'>
+
+	<script src="__PUBLIC__/js/jquery.js" ></script>
+	<script src="__PUBLIC__/jusaas/js/common.js"></script>
+	<script src="__PUBLIC__/jusaas/js/dom.js"></script>
+	<script src="__PUBLIC__/jusaas/mctree/MCTree.js"></script>
+	<script src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+	<script src="__PUBLIC__/jusaas/js/autoform.js"></script>
+	
+<style>
+
+</style>
+<title>文件目录管理</title>
+
+</head>
+<input type='text' id='searchtext'  value='' onKeyup="gotoSearch();" />
+<input type='button' value='搜索'  class='formbutton' onclick="search()">
+<input type='button' value='新增'  class='formbutton' onclick="addnew()">
+<input type='button' value='创建子目录'  class='formbutton' onclick="createSubMenu()">
+
+
+<table width="100%" >
+<tr>
+<td style='vertical-align:top;width:30%'>
+<div id="mctree_div" class='ztree'></div> 
+</td>
+<td style='vertical-align:top;'>
+<div id="mcform"  ></div>  
+	<div style='text-align:right;display:none' id='formbuttons' >
+	<input type='button' value='保存' class='formbutton' onclick="saveRecord()">
+	<input type='button' value='删除' class='formbutton'  onclick="deleteNode()">
+
+	</div>
+</td></tr></table>
+</body>
+</html>
+<script>
+var form1;
+var wl;
+var mcssTable;
+var currentNodeId;
+var count=1;
+
+$(document).ready(function(){
+	loadTree();
+})
+
+ 
+function loadTree()
+{
+ 	var url="__APP__/Mcss/Model/getTree";
+	var filter="SYS_ORGID="+getCookie("mcss_orgid");
+ 	$.getJSON(url,{table:"oa_filedir",id:"id",pid:"parentid",name:"name",filter:filter},function(data){
+  		var orgdata=getTreeJSON(data,'','id','parentid');
+		
+		wl=new MCTree("mctree_div",orgdata,{srcData:data,field_id:"id",field_pid:"parentid",click:clickNode,loadstyle:'loadallshowone',focusNode:currentNodeId});
+		wl.run();
+	})
+	$("#formbuttons").hide();	
+}
+
+function clickNode(obj,objid)
+{
+
+
+	$("span").removeClass("menunav");
+	$(obj).addClass("menunav");
+	var nodeid=$(obj.parentNode).attr('objectid');
+	form1=new Autoform('mcform',{"modelid":"oa_filedir",recordid:nodeid});   
+	form1.run();
+	$("#formbuttons").show();		
+}
+
+ 
+function search()
+{
+var s=$("#searchtext").val();
+wl.searchNode(s);
+}
+ 
+function gotoSearch()
+{
+	if (event.keyCode==13){
+		search();
+	}
+}
+function saveRecord()
+{
+	form1.save(false,reloadTree,true);
+}
+function reloadTree(id,hint,form)
+{
+	if (hint.indexOf("没有")==-1)
+	{
+		currentNodeId=id;	
+		loadTree();
+	}	
+}
+//删除节点
+function deleteNode(id)
+{
+	if(confirm('确定要删除此节点吗？')){
+		form1.deleteRecord();
+		form1=new Autoform('mcform',{"modelid":form1.modelid});   
+		form1.run();
+		wl.deleteCurentNode();
+	}
+
+}
+function addnew()
+{
+	form1=new Autoform('mcform',{"modelid":'oa_filedir'});   
+	form1.run();
+}
+//创建子 
+function createSubMenu()
+{
+	var currentid=wl.currentNodeId;
+	form1=new Autoform('mcform',{"modelid":"oa_filedir",'defaultValue':"parentid:"+currentid});   
+	form1.run();
+}
+</script>

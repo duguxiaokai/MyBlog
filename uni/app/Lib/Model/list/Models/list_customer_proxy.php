@@ -1,0 +1,26 @@
+<?php return array(
+'id'=>"list_customer_proxy",
+'title'=>"客户列表",
+'tablename'=>"crm_customer",
+'open_window_style'=>"popup:middle",
+'pagerows'=>"20",
+'cols'=>"2",
+'fields'=>array(
+ array('id'=>"id",'name'=>"ID",'isvisible'=>"false",'visibleWhenAdd'=>"false",'width'=>"250px",),
+ array('id'=>"no",'name'=>"用户号",'unique'=>"true",'style'=>"text-align:center",'width'=>"200px",),
+ array('id'=>"name",'name'=>"单位名称",'width'=>"250px",),
+ array('id'=>"address",'name'=>"地址",'width'=>"250px",),
+ array('id'=>"contacts",'name'=>"联系人",'width'=>"250px",),
+ array('id'=>"agent",'name'=>"销售机构",'width'=>"250px",),
+ array('id'=>"district",'name'=>"所属区域",'style'=>"text-align:center",'width'=>"250px",),
+ array('id'=>"biaoji",'name'=>"标记",'defaultdata'=>"未审核",'isvisible'=>"false",'visibleWhenAdd'=>"false",'width'=>"200px",),
+ array('id'=>"post",'name'=>"邮编",'length'=>"6",'style'=>"text-align:center",'width'=>"200px",),
+ array('id'=>"tel",'name'=>"电话",'width'=>"200px",),
+ array('id'=>"phone",'name'=>"手机",'style'=>"text-align:center",'width'=>"200px",),
+ array('id'=>"fax",'name'=>"传真",'width'=>"200px",),
+ array('id'=>"email",'name'=>"邮箱",'style'=>"text-align:center",'width'=>"200px",),
+ array('id'=>"notes",'name'=>"备注",'width'=>"200px",),
+ array('id'=>"srctype",'name'=>"来源",'fieldtype'=>"string",'type'=>"dropdown",'data'=>"直销,渠道",'visibleWhenAdd'=>"false",'width'=>"200px",),
+),
+
+) ?>

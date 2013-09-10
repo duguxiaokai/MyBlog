@@ -1,0 +1,334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> <!--dtd协议-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>详情信息</title>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/themes/default/css/common.css' />
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/themes/default/css/otherweb.css' />
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/themes/default/css/css3btn.css' />
+<script src="__PUBLIC__/js/jquery.js" ></script>
+<script src="__PUBLIC__/jusaas/js/common.js"></script>
+<script src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/plugins/scrolltopcontrol/scrolltopcontrol.js"></script>
+<script >
+var form1,form2,sendflower,sendegg,aboutreply,form3,modelid;
+var id="";
+$(document).ready(function() {
+	s=location.href;
+	modelid=getParamValue(s,"model");//模型id
+	id=getParamValue(s,"id");
+ 	form1=new Autoform('formdata',{recordid:id,modelid:modelid,homeUrl:"__APP__"});   
+    form1.run(afterLoadRows_info);
+	
+	form2=new Autoform('formdata2',{modelid:"oa_info_reply"});   
+    form2.run();
+	
+	form3=new Autoform('formdata3',{modelid:"oa_info_count",recordid:'url:KEYFIELD'});   
+    form3.run(updateCount);
+	
+	$('.fastre').click(function(){
+		$("body").animate({scrollTop:$("#add_pinglun").offset().top},1000);
+	});
+});
+
+function updateCount(){
+	var count = form3.getFieldValue('count');
+	if(!count)
+		count =  0;
+	count=parseInt(count)+1;
+	form3.setFieldValue('count',count);
+	form3.save(false,'',true);
+	
+}
+
+function afterLoadRows_info()
+{
+	chageInput();
+	loadshortcut();
+	
+	var flowernum = form1.getFieldValue("flower");
+	var eggnum = form1.getFieldValue("egg");
+	if(!flowernum || flowernum=='undefined')
+		flowernum = '0';
+	if(!eggnum || eggnum=='undefined')
+		eggnum = '0';
+	$("#flower").html(flowernum);
+	$("#egg").html(eggnum);
+	
+	var writer = form1.getFieldValue("name");
+	var loginuser = getCookie("mcss_loginuser");
+	var loginuserrole = getCookie("mcss_loginuserrole");
+	if(loginuser==writer || loginuserrole=='admin'){
+		$("#first").show();
+	}
+	var autor = form1.getFieldValue("SYS_ADDUSER");
+	var time = form1.getFieldValue("SYS_ADDTIME");
+	$("#addtime").html("发表于 "+time);
+	$("#articleauthor").html(autor);
+	var url = '__APP__/Oa/Index/getautorinfo';
+	$.getJSON(url,{autor:autor},function(data){
+		var imgsrc = "__PUBLIC__/themes/default/images/photo.jpg";
+		var sum = 0;
+		if(data['imgsrc'])
+			imgsrc = "__PUBLIC__/uploadfile/"+data['imgsrc'];
+		
+		if(data['articalsum'])
+			sum = data['articalsum'];
+			
+		$("#sumartical").html(sum);
+		$("#autorimg").attr("src",imgsrc);
+	})
+}
+//修改文本框
+function chageInput(){
+	$("#content").show();
+	$("#content").html('');
+	var h="";
+	var writer = form1.getFieldValue("name");
+	//h+="<h3 class='showTitles'>"+writer+"</h3>";
+	h+="<div class='zhengwen'>"+$("#"+form1.getFieldID('detail')).text()+"</div>";
+	$("#thread_subject").html(writer);
+	$("#content").html(h);
+}
+//加载回复列表
+function loadshortcut(){
+	var url= "__APP__/Oa/Index/getReplyList";
+	var oid = form1.getFieldValue("id");
+	$.getJSON(url,{oid:oid},function(data){
+		if(data.length>0){
+			$("#shortcut").html('');
+			for(var i = 0;i<data.length;i++)
+			{
+				var imgsrc = "uploadfile/"+data[i]['imgsrc'];
+				if(!data[i]['imgsrc'])
+					imgsrc = "themes/default/images/photo.jpg";
+				//"<li style='margin-top:10px'>"+(i+1)+"楼 "+data[i]['SYS_ADDUSER']+":"+data[i]['content']+" 评论于"+data[i]['SYS_ADDTIME']+"</li>";
+				
+				var pinglunHtml="<table cellspacing='0' cellpadding='0'><tr><td class='pls' rowspan='2' style='padding-top:0px;'><div class='authi'>"+(i+1)+"楼 "+data[i]['SYS_ADDUSER']+"</div><div class='avatar'><img src='__PUBLIC__/"+imgsrc+"' width='125px' height='130px' class='userHeadphoto'/></div></td><td class='plc'><div class='authi_times'><img src='__PUBLIC__/themes/default/images/online_member.gif'> 评论于"+data[i]['SYS_ADDTIME']+"</div></td></tr><tr><td class='plc'><div class='pinglun_zhengwen'>"+data[i]['content']+"</div></td></tr><tr><td class='pls'></td><td class='plc'><div class='po'><span class='zhichihuifu' onclick='javascript:makeyes(this,"+data[i]['id']+")' style='cursor:pointer'><img src='__PUBLIC__/themes/default/images/thumb_up.png' title='支持一下'/>("+data[i]['yes']+")</span>&nbsp;<span class='zhichihuifu'>|</span>&nbsp;<span class='zhichihuifu' onclick='javascript:makeno(this,"+data[i]['id']+")' style='cursor:pointer'><img src='__PUBLIC__/themes/default/images/thumb_down.png' title='反对'/>("+data[i]['no']+")</span></div></td></tr><tr class='ad'><td class='pls'></td><td class='plc'></td></tr></table>";
+				
+				$("#shortcut").removeClass('pinglunTab_no').append(pinglunHtml);
+			}
+		}
+		else
+		{	$("#shortcut").html('');
+			$("#shortcut").addClass('pinglunTab_no').append("该文章暂时还没有评论哦,快来评论一下吧!")
+		}
+	});
+}
+//检查回复内容是否合法
+function checkReply(){
+	if($("#replyContent").val()){
+		saveReply();
+	}else{
+		alert("请输入评论内容!");
+	}
+}
+//保存评论
+function saveReply(){
+	var content = $("#replyContent").val();
+	var oid = form1.getFieldValue("id");
+	form2.setFieldValue("oid",oid);
+	form2.setFieldValue("content",content);
+	form2.save(false,clearId,true);
+	form1.setFieldValue("comment",content);
+	form1.save(false,'',true);
+	alert('评论成功!');
+	loadshortcut();
+}
+//清除回复的id
+function clearId(){
+	form2.recordid = "";
+}
+//增加鲜花
+function addflower(){
+	if(!sendflower){
+		var flower = form1.getFieldValue('flower');
+		if(!flower)
+			flower = 0;
+		flower = parseInt(flower)+1;
+		form1.setFieldValue('flower',flower);
+		form1.save(false,'',true);
+		$("#flower").html(flower);
+		sendflower='hadSend';
+	}else{
+		alert('您送的太频繁了！');
+	}	
+}
+//增加鸡蛋
+function addegg(){
+	if(!sendegg){
+		var egg = form1.getFieldValue('egg');
+		if(!egg)
+			egg = 0;
+		egg = parseInt(egg)+1;
+		form1.setFieldValue('egg',egg);
+		form1.save(false,'',true);
+		$("#egg").html(egg);
+		sendegg='hadSend';
+	}else{
+		alert('您扔的太频繁了！');
+	}	
+}
+//表示赞同
+function makeyes(obj,rid){
+	if(!aboutreply){
+		var url = "__APP__/Oa/Index/makeyes";
+		$.post(url,{id:rid},function(data){
+			$(obj).html("支持("+data+")")
+			aboutreply = '支持';
+		})
+	}else{
+		alert('你已经'+aboutreply+'过了!');
+	}
+
+}
+//表示反对
+function makeno(obj,rid){
+	if(!aboutreply){
+		var url = "__APP__/Oa/Index/makeno";
+		$.post(url,{id:rid},function(data){
+			$(obj).html("反对("+data+")")
+			aboutreply = '支持';
+		})
+		aboutreply = '反对';
+	}else{
+		alert('你已经'+aboutreply+'过了!');
+	}
+}
+//翻页上一页下一页
+function pageAction(param){
+	var id = form1.getFieldValue('id');
+	$.getJSON("__APP__/Oa/Index/getRowsInfo",{param:param,id:id},function(data){
+		if(!data[0] && param=='next'){
+			alert("这已经是最后一篇文章了哦!");return;
+		}else if(!data[0] && param=='prev'){
+			alert("这已经是第一篇文章啦!");return;
+		}
+		window.location.href = "__APP__/Oa/Index/viewRecord/model/oa_info_view/id/"+data[0]['id'];
+	})
+}
+</script>
+</head>
+
+<body class='padding'>
+<div id='main' class="disczz_con">
+	<div id="mcss_pagebar"></div><!--弹出窗口-->
+	<table cellspacing="0" cellpadding="0">
+	<tr><td class="pls ptm pbm">
+		<div class="hm">
+		<span class="xg1">查看:</span> <span class="xi1">{$count}</span><span class="pipe">|</span><span class="xg1">评论:</span> <span class="xi1">{$countreply}</span>
+		</div>
+		</td>
+		<td class="plc ptm pbn">
+		<h1 class="ts">
+		<a href="#" id="thread_subject">……</a>
+		<span>
+		<a href="#" onClick="return copyThreadUrl(this)" title="复制链接发给好友查看">[复制链接]</a>
+		</span>
+		<div class="y">
+		<a href="javascript:void(0)" onclick="pageAction('prev')" title="上一篇"><img src="__PUBLIC__/themes/default/images/thread-prev.png" alt="上一篇" class="vm"></a>
+		<a href="javascript:void(0)" onclick="pageAction('next')"  title="下一篇"><img src="__PUBLIC__/themes/default/images/thread-next.png" alt="下一篇" class="vm"></a>
+		</div>
+		</h1>
+		</td>
+	</tr></table>
+	<table cellspacing="0" cellpadding="0" class="ad"><tbody><tr><td class="pls"></td><td class="plc"></td></tr></tbody></table>
+	<!--论坛正文-->
+	<table cellspacing="0" cellpadding="0">
+	<tr>
+		<td class="pls" rowspan="2" style="padding-top:0px;">
+		<div class="authi" id='articleauthor'></div>
+		<div class="avatar"><img id="autorimg" width="125px" height="130px" class="userHeadphoto"/></div>
+		<div class="luntan_user_info">
+		<p>主题: </p>
+		<p>发帖量: <span id='sumartical'></span></p>
+		<p>评论: </p>
+		</div>
+		</td>
+		<td class="plc">
+		<div class="authi_times">
+		<img src="__PUBLIC__/themes/default/images/online_member.gif">
+		<span id='addtime'></span>
+		</div>
+		</td>
+	</tr>
+	<tr>
+		<td class="plc">
+		<div id="content" class="contents"></div>
+		</td>
+	</tr>
+	<tr>
+		<td class="pls"></td>
+		<td class="plc plm">
+		<div class="mtw">
+		<!--分享到-->
+		<div class="bshare-custom"><b>分享到：</b><a title="分享到QQ空间" class="bshare-qzone"></a><a title="分享到新浪微博" class="bshare-sinaminiblog"></a><a title="分享到人人网" class="bshare-renren"></a><a title="分享到腾讯微博" class="bshare-qqmb"></a><a title="分享到豆瓣" class="bshare-douban"></a><a title="更多平台" class="bshare-more bshare-more-icon more-style-addthis"></a><span class="BSHARE_COUNT bshare-share-count">0</span></div>
+	<script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/buttonLite.js#style=-1&amp;uuid=&amp;pophcol=2&amp;lang=zh"></script><script type="text/javascript" charset="utf-8" src="http://static.bshare.cn/b/bshareC0.js"></script>
+		</div>
+		<div class="pinglunClick">
+			<!--<span><a href="javascript:addflower()" class="zhichi">送鲜花:(0)</a></span>
+			<span><a href="javascript:addegg()" class="fandui">扔鸡蛋:(0)</a></span>-->
+			<!--送鲜花-->
+			<div class="test">
+				<a href="javascript:addflower()" class="aLink">
+					<span class="txt"  id='flower'>0</span>
+					<img src="__PUBLIC__/themes/default/images/01.png" class="img" />
+					<span class="txt2">
+						<span>Send flowers</span>
+						送鲜花
+					</span>
+				</a>
+			</div>
+			<!--鸡蛋-->
+			<div class="test">
+				<a href="javascript:addegg()" class="aLink">
+					<span class="txt"  id='egg'>0</span>
+					<img src="__PUBLIC__/themes/default/images/02.png" class="img" />
+					<span class="txt2">
+						<span>Throw egg</span>
+						扔鸡蛋
+					</span>
+				</a>
+			</div>
+		</div>
+		</td>
+	</tr>
+	<tr>
+		<td class="pls"></td>
+		<td class="plc">
+		<div class="po">
+		<a class="fastre" href="#">我来评论</a>
+		</div>
+		</td>
+	</tr>
+	<tr class="ad">
+		<td class="pls"></td>
+		<td class="plc">
+		</td>
+	</tr>
+	</table>
+
+<!--最新评论-->
+<div id='shortcut' class="pinglunTab"></div>
+</div>
+<!--添加评论-->
+<div class="add_pinglun" id="add_pinglun">
+	<table cellspacing="0" cellpadding="0">
+	<tr>
+		<td class="pls" style="padding-top:0px;">
+		</td>
+		<td class="plc">
+		<div class="ds-textarea-wrapper">
+		<textarea name="message" placeholder="说点什么吧…" id='replyContent'></textarea>
+		<a class="ds-post-button big_btn big_btn-green" onClick="checkReply()">发表评论</a>
+		</div>
+		</td>
+	</tr>
+	</table>
+</div>
+<div id='background' class='background'></div><div id='progressBar' class='progressBar'>数据加载中，请稍等...</div>
+<div id="formdata" style="display:none"></div>
+<div id="formdata2" style="display:none"></div>
+<div id="formdata3" style="display:none"></div>
+</body>
+</html>

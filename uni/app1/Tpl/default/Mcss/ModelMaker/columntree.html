@@ -1,0 +1,391 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<link rel='stylesheet' type='text/css' href='__PUBLIC__/jusaas/mctree/MCTree_left.css'>
+	<link href='__PUBLIC__/themes/blue/css/common.css' rel='stylesheet' type='text/css'>
+
+	<script src="__PUBLIC__/js/jquery.js" ></script>
+	<script src="__PUBLIC__/jusaas/mctree/MCTree.js"></script>
+	<script src="__PUBLIC__/jusaas/js/common.js"></script>
+	<script src="__PUBLIC__/jusaas/js/autoform.js"></script>	
+	<script src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+	<script src="__PUBLIC__/jusaas/js/dom.js"></script>
+	
+<style>
+
+</style>
+<title>功能菜单管理</title>
+
+</head>
+<body>
+<input type='button' value='新增' onclick="addnew()">
+<input type='text' id='searchtext' value='' onKeyup="gotoSearch();" onFocus="onFocusSearchtext()" />
+<input type='button' value='搜索' onclick="search()">
+<input type='radio' name='mode' id='designmode' value='design' checked="true" onchange='changeMode(this);' /><label  for='designmode'>设计模式</label>
+<input type='radio' name='mode' id='runningmode' value='running' onchange='changeMode(this);' /><label for='runningmode'>运行模式</label>
+
+
+<table id="main_table"><tr>
+<td style='vertical-align:top;'> 
+<div id="mctree_div" class='maindiv'></div> 
+<div id="status"></div> 
+</td>
+<td style="vertical-align:top;">
+<div id="mainform" style="display:none;">
+
+	<div id="mcform"></div>
+
+	<table id="mcss_table"  border='0' width="100%"></table>
+	<div style='text-align:right'>
+		<input type='button' value='创建子菜单' onclick="createSubMenu()">
+		<input type='button' value='保存' onclick="saveRecord()">
+		<input type='button' value='上移' onclick="moveup()">
+		<input type='button' value='下移' onclick="movedown()">
+		<input type='button' value='复制' onclick="copy()">
+		<input type='button' value='删除' onclick="deleteNode()">
+		
+	</div>
+</div>
+<iframe id='model_view' style="display:none;width:1200px;height:1000px;"></iframe>
+
+</td></tr></table>
+</body>
+</html>
+<script>
+var form1;
+var wl;
+var mcssTable;
+var currentNodeId;
+var count=1;
+
+$(document).ready(function(){
+//	$.get("__APP__/Home/Index/getUserOrgs",{field:"code"},function(data){
+	//alert(data);
+//		$("#apps").html( createSelect(","+data));
+//		var app=getCookie("mcss_orgid");
+//		$("#apps").val(app);
+//		var obj=$("#apps").get(0);
+			//alert(obj.value);
+		filterApp();
+		
+//	})	
+})
+
+function initTree(filter,callback)
+{
+	$("#mctree_div").empty();
+ 	var url="__APP__/Mcss/Model/getcolumn";
+	if (!filter)
+		filter="";
+ 	$.getJSON(url,{table:"ems_menu",id:"no",pid:"groupno",name:"name",filter:filter,orderby:"sort"},function(data){
+		//alert(data);return;
+		if (!data || data.length==0)
+		{
+			$("#beginCreate").show();
+		}
+  		var orgdata=getTreeJSON(data,'','no','groupno');
+		
+		wl=new MCTree("mctree_div",orgdata,{srcData:data,field_id:"no",field_pid:"groupno",click:clickNode,loadstyle:'loadallshowone',focusNode:currentNodeId});
+		wl.run(callback);
+	})
+}
+ 
+ 
+
+//删除节点
+function deleteNode(id)
+{
+	if(confirm('确定要删除此节点吗？')){
+		
+		form1.deleteRecord();
+		form1=new Autoform('mcform',{"modelid":form1.modelid,"homeUrl":"__APP__"});   
+		form1.run();
+		wl.deleteCurentNode();
+	}
+
+}
+ 
+function clickNode(obj,objid)
+{
+	$("span").css("border-style","");
+	$(obj).css("border-style","solid");
+	
+	var mode=mcdom.getRadioValue("mode");
+	if (mode=="design")
+	{
+		$.post("__APP__/Mcss/Model/getmenuIdByCode",{code:objid},function(id){
+			$("#mainform").show();
+			$("#mcss_table").hide();
+			form1=new Autoform('mcform',{"modelid":"ems_menu","homeUrl":"__APP__",'recordid':id});   
+			form1.run(afterRun);
+		})
+	}
+	else if (mode=="running")
+	{
+		var func_code=objid;
+		openModel(func_code);
+	}
+}
+
+//创建模型表单后
+function afterRun(mcform)
+{
+	setFieldVisible(mcform)	;
+	$("#"+mcform.getFieldID("type")).change(function(){
+		setFieldVisible(mcform)	
+	});
+	$("#"+mcform.getFieldID("modelid")).change(function(){
+		var models=form1.getFieldValue("models");
+		if (models.indexOf(this.value)==-1)
+		{
+			form1.setFieldValue("models",this.value);
+		}
+	});
+	var h="<span class='labellink' title='选择模型' id='select_model'>选择模型</span>";
+	h+="-<span class='labellink' title='编辑模型' id='edit_model'>编辑模型</span>";
+	mcform.addText("modelid",h);
+	h="<span class='labellink' title='选择上级菜单' id='select_parentmenu'>选择</span>";
+	mcform.addText("groupno",h);
+	$("#select_model").click(function(){
+		ShowIframe("__APP__/Mcss/Model/modeltree",400,500,"选择模型",'1');
+	})
+	$("#select_parentmenu").click(function(){
+		ShowIframe("__APP__/Mcss/Model/selectmenu",400,500,"选择模型",'1');
+	})
+	$("#edit_model").click(function(){
+		ShowIframe("__APP__/Mcss/Model/modelmanager/modelid/"+mcform.getFieldValue("modelid"),800,600,"编辑模型");
+	})
+
+	
+	
+}
+
+function setFieldVisible(mcform)
+{
+		var type=mcform.getFieldValue("type");
+		if (type=="form" || type=="table")
+		{
+			mcform.setFieldVisible("modelid",true);
+			mcform.setFieldVisible("url",false);
+			mcform.setFieldVisible("content",false);
+		}
+		else
+		if (!type|| type=="url")
+		{
+			mcform.setFieldVisible("modelid",false);
+			mcform.setFieldVisible("url",true);
+			mcform.setFieldVisible("content",false);
+		}		
+		else
+		if (type=="html")
+		{
+			mcform.setFieldVisible("modelid",false);
+			mcform.setFieldVisible("url",false);
+			mcform.setFieldVisible("content",true);
+		}
+}
+function addnew()
+{
+	$("#mainform").show();
+	if (!form1)
+	{
+		form1=new Autoform('mcform',{"modelid":'ems_menu',"homeUrl":"__APP__"});   
+		form1.run(setDefaultFuncCode);
+	}
+	else
+	{
+		var currentid=form1.getFieldValue("groupno");
+		var status=form1.getFieldValue("status");
+		var apps=form1.getFieldValue("apps");
+		form1=new Autoform('mcform',{"modelid":"ems_menu",'defaultValue':"groupno:"+currentid+",status:"+status+",apps:"+apps});   
+		form1.run(setDefaultFuncCode);
+
+	}
+}
+
+//给新建菜单设置默认值
+function setDefaultFuncCode(form)
+{
+	var d = new Date();
+	var y = d.getFullYear();
+	var m = d.getMonth() + 1;
+	var day = d.getDate();
+	var h=d.getHours();
+	var mi=d.getMinutes();
+	var s=d.getSeconds();
+	var ms=d.getMilliseconds();
+	newValue="func_"+y+"_"+m+"_"+day+"_"+"_"+mi+"_"+s+"_"+ms+"_by"+getCookie("loginuser");
+	form.setFieldValue("no",newValue);
+	form.setFieldValue("name","菜单");
+	form.setFieldValue("apps",getCookie("mcss_app"));
+	afterRun(form);	
+}
+function saveRecord()
+{
+	form1.save(false,reloadTree);
+}
+//复制节点	form.setFieldValue("name","菜单");
+
+function copy(){
+	if(form1.getFieldValue('no')){
+		name = form1.getFieldValue('name');
+		no = form1.getFieldValue('no');
+		groupno = form1.getFieldValue('groupno');
+		url = form1.getFieldValue('url');
+		sort = form1.getFieldValue('sort');
+		apps = form1.getFieldValue('apps');
+		models = form1.getFieldValue('models');
+		status = form1.getFieldValue('status');
+		notes = form1.getFieldValue('notes');
+		form2=new Autoform('mcform',{"modelid":'ems_menu',"homeUrl":"__APP__"});   
+		form2.run(setValue);
+	}else{
+		alert('请选择一个要复制的节点!');
+	}	
+}
+function setValue(){
+		form2.setFieldValue('name',name+'_copy'+count);
+		form2.setFieldValue('no',no+'_copy'+count);
+		form2.setFieldValue('groupno',groupno);
+		form2.setFieldValue('url',url);
+		form2.setFieldValue('sort',sort);
+		form2.setFieldValue('apps',apps);
+		form2.setFieldValue('models',models);
+		form2.setFieldValue('status',status);
+		form2.setFieldValue('notes',notes);
+		count++;
+		form2.save(false,reloadTree2,true);
+}
+function reloadTree(id)
+{
+	currentNodeId=form1.getFieldValue("no");	
+	var obj=$("#apps").get(0);
+	filterApp();	
+}
+function reloadTree2(id)
+{
+	alert('复制成功!');
+	var filter="";
+	if (app)
+		filter="apps like '%"+app+"%'";
+	currentNodeId=form1.getFieldValue("no");	
+	initTree(filter);
+}
+
+//根据组织id刷新功能树
+function refreshTree(orgid)
+{
+	$.get("__APP__/Sys/System/get1bysql",{sql:"select code from sys_org where id="+orgid},function(orgcode){
+		filter="";
+		initTree(filter);
+	})
+} 
+
+var app;
+function filterApp()
+{
+
+	initTree("");
+
+}
+
+function search()
+{
+var s=$("#searchtext").val();
+wl.searchNode(s);
+}
+
+function gotoSearch()
+{
+	if (event.keyCode==13){
+		search();
+	}
+}
+function onFocusSearchtext()
+{
+var s=$("#searchtext").val();
+if (s=="输入搜索词")
+	$("#searchtext").val("");
+
+}
+
+//上移节点
+function moveup()
+{
+	var func2=$("#"+wl.currentNodeId).prev().attr("id");
+	$.post("__APP__/Mcss/Model/switch_menu_sort",{func_code1:wl.currentNodeId,func_code2:func2},function(resulr){
+	})
+	wl.moveup(wl.currentNodeId);
+}
+//下移节点
+function movedown()
+{
+	var func2=$("#"+wl.currentNodeId).next().attr("id");
+	$.post("__APP__/Mcss/Model/switch_menu_sort",{func_code1:wl.currentNodeId,func_code2:func2},function(resulr){
+	})
+	wl.movedown(wl.currentNodeId);
+	
+}
+
+
+function openModel(func_code)
+{
+	$.post("__APP__/Sys/System/getmenuUrl",{func_code:func_code},function(url){
+		var url=getrooturl()+"/index.php/"+url;
+		$("#model_view").attr("src",url);
+	})
+}
+
+function setSelectedModel(node,nodetype)
+{
+	if (nodetype=="model")
+	{
+		var modelid=node.innerHTML;
+		var m=modelid;
+		var arr=modelid.split(".");
+		if (arr.length==2)
+			m=arr[0];
+		form1.setFieldValue("modelid",m);
+	} else
+	if (nodetype=="menu")
+	{
+		form1.setFieldValue("groupno",node.parentNode.id);
+	}
+	popp.close();
+}
+
+//切换模式
+function changeMode(e)
+{
+	if (e.value=="design")
+	{
+		$("#model_view").hide();
+		$("#mainform").show();
+
+	}
+	else if (e.value=="running")
+	{
+		$("#mainform").hide();
+		$("#model_view").show();
+		//如何自动调整iframe的宽度？谁能搞定？
+		//alert(document.body.clientWidth);
+		//alert(parseInt($("#main_table").css("width")));
+		var w=screen.width-parseInt($("#mctree_div").css("width"))-300;
+		$("#model_view").css("width",w+"px");
+		
+	}
+	var node=$("#"+wl.currentNodeId+"_name").get(0);
+	clickNode(node);
+}
+
+//创建子菜单
+function createSubMenu()
+{
+	var code=form1.getFieldValue("no");
+	var status=form1.getFieldValue("status");
+	var apps=form1.getFieldValue("apps");
+	form1=new Autoform('mcform',{"modelid":"ems_menu",'defaultValue':"groupno:"+code+",status:"+status+",apps:"+apps});   
+	form1.run(setDefaultFuncCode);
+}
+</script>

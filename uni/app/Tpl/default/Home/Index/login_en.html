@@ -1,0 +1,238 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Login</title>
+<link href="__PUBLIC__/css/common.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/themes/default/css/common.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/themes/default/css/login.css" rel="stylesheet" type="text/css">
+
+<script src='__PUBLIC__/js/jquery.js'></script>
+<script src='__PUBLIC__/jusaas/js/common.js'></script>
+<script src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script src="__PUBLIC__/jusaas/js/dom.js"></script>
+<script src='__PUBLIC__/jusaas/js/login.js'></script>
+<script language="JavaScript">
+
+	
+$(document).ready(function() 
+{
+
+	//初始化：是否开启DIV弹出窗口功能
+	//0 表示开启; 1 表示不开启;
+	var popupStatus = 0;
+	//使用Jquery加载弹窗 
+	function loadPopup(){   
+	//仅在开启标志popupStatus为0的情况下加载  
+	if(popupStatus==0){   
+		$("#backgroundPopup").css({   
+			"opacity": "0.7"  
+		});   
+		$("#backgroundPopup").fadeIn("slow");   
+		$("#popupContact").fadeIn("slow");   
+		popupStatus = 1;   
+		}   
+	}  
+	//使用Jquery去除弹窗效果 
+	function disablePopup(){   
+	//仅在开启标志popupStatus为1的情况下去除
+		if(popupStatus==1){   
+				$("#backgroundPopup").fadeOut("slow");   
+				$("#popupContact").fadeOut("slow");   
+				popupStatus = 0;   
+			}   
+	} 
+	//将弹出窗口定位在屏幕的中央
+	function centerPopup(){   
+	//获取系统变量
+		var windowWidth = document.documentElement.clientWidth;   
+		var windowHeight = document.documentElement.clientHeight;   
+		var popupHeight = $("#popupContact").height();   
+		var popupWidth = $("#popupContact").width();   
+		//居中设置   
+		$("#popupContact").css({   
+			"position": "absolute",   
+			"top": windowHeight/2-popupHeight/2,   
+			"left": windowWidth/2-popupWidth/2   
+		});   
+		//以下代码仅在IE6下有效
+		  
+		$("#backgroundPopup").css({   
+			"height": windowHeight   
+		});   
+	}
+	
+	//打开弹出窗口   
+	//按钮点击事件!
+	$("#findbutton").click(function(){   
+		//调用函数居中窗口
+		centerPopup();   
+		//调用函数加载窗口
+		loadPopup();   
+	});
+	//关闭弹出窗口   
+	//点击"X"所触发的事件
+	$("#popupContactClose").click(function(){   
+			disablePopup();   
+	});   
+	//点击窗口以外背景所触发的关闭窗口事件!
+	$("#backgroundPopup").click(function(){   
+		disablePopup();   
+	});   
+	//键盘按下ESC时关闭窗口!
+	$(document).keypress(function(e){   
+		if(e.keyCode==27 && popupStatus==1){   
+			disablePopup();   
+		}   
+	}); 
+	function register()
+	{	
+		var emailcheck=$("#email").val();
+		var name=$("#user").val();
+		if(name != '')
+		{
+			$.post("__APP__/Home/Index/checkedname",{'user':name},function(user){
+				if(user == '0')
+				{
+					alert('用户名不存在');
+					return;
+				}else
+				{
+					if(emailcheck != '')
+					{
+						$.post("__APP__/Home/Index/checkedemail",{'email':emailcheck,'user':name},function(emails){
+							if(emails == '0')
+							{
+								alert('您输入的邮箱和用户名不匹配');
+								return;
+							}else
+							{
+								$("#adminform").submit();
+							}
+			
+						});
+					}else
+					{
+						alert('邮箱不能为空');
+						 return;
+					}
+				}
+			});
+		}else
+		{
+			alert('用户名不能为空');
+			return;
+		}
+	}
+
+});
+
+
+</script>
+<style type="text/css">
+#backgroundPopup{   
+display:none;   
+position:fixed;   
+_position:absolute;   
+height:100%;   
+width:100%;   
+top:0;   
+left:0;   
+background:#000000;   
+border:1px solid #cecece;   
+z-index:1;   
+}   
+#popupContact{   
+display:none;   
+position:fixed;   
+_position:absolute;   
+height:250px;   
+width:350px;   
+background:#FFFFFF;   
+border:2px solid #cecece;   
+z-index:2;   
+padding:12px;   
+font-size:13px;   
+}   
+#popupContact h1{   
+text-align:left;   
+color:#A35B20;   
+font-size:12px;   
+font-weight:700;   
+border-bottom:1px dotted #A35B20;   
+padding-bottom:2px;   
+margin-bottom:10px;   
+}   
+#popupContactClose{   
+font-size:14px;   
+line-height:14px;   
+right:6px;   
+top:4px;   
+position:absolute;   
+color:#A35B20;  
+border:#A35B20 1px solid; 
+font-weight:700;   
+display:block; padding:0 2px;
+cursor:pointer;
+} 
+#contactArea{ line-height:20px;}
+label{color:#AF7715}
+label.error{ color:red}
+
+.findpwdinput{background-color: #FFFFFF;
+    border: 1px solid #D6BC8B;
+    height: 16px;
+    width: 130px;}
+	#contactArea h2{ margin-top:10px;}
+	.findSub{ width:50px; height:25px; background:#C60; color:#FFF; border:none; font-weight:bold}
+</style>
+</head>
+<body>
+<div>
+	<div class="loginlbox" style="margin:10px;">
+        	<div class="loginlbtop">
+            	<strong>Login</strong>
+            </div>
+            <div class="loginlbbottom">
+			<table cellpadding="0" cellspacing="0">
+				<tr>
+					<td height="30" align="right" valign="middle"><strong>User name:</strong></td>
+					<td align="left" valign="middle"><input type="text" class="logintxt" name="username" id="username" onKeyup="gotologin(event);"  onBlur="getLoginuserOrgList()"/></td>
+				</tr>
+				<tr>
+					<td height="30" align="right" valign="middle"><strong>Password:</strong></td>
+					<td align="left" valign="middle"><input type="password" class="logintxt" id="password" name="password" onKeyup="gotologin(event);" /></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td height="60"><input type="button" class='formbutton'  value='Login' onClick="login_login()" id="check"  /> </td>
+				</tr>
+				<tr>
+					<td></td>
+					<td height="35">
+					<a href='javascript:void(0)' style="color:#AF7715" id="findbutton">Forget password?</a>
+					<a href="__APP__/Home/Index/register" style="padding-left:5px;">Register now</a>
+					</td>
+				</tr>
+            </table>
+
+      		</div>
+		</div>
+ </div>
+    <!--找回密码？-->
+    <div id="popupContact">  
+        <a id="popupContactClose" title="关闭">x</a>  
+        <h1>找回密码</h1>  
+        <div id="contactArea">
+            <p>请输入您的用户名和邮箱地址，我们会把密码发送到您的邮箱。</p>
+            <p>提交以后，请检查您的信箱收取新的密码，若无法收到新密码，请检查邮件是否有效或者与管理员联系：</p>  
+            <form action="__APP__/home/Index/password_send_email" method="post" id='adminform'>
+            <h2><label>&nbsp;&nbsp;&nbsp;&nbsp;用户名：</label><input style="width:150px" type='text' name='user' id='user' class="findpwdinput" /></h2>
+            <h2><label>请输入邮箱：</label><input style="width:150px" type='text' name='email' id='email' class="findpwdinput" /></h2>
+            <h2 style="padding-left:80px"> <input type="button" value='确定' onClick='register()' class="findSub"/> <input type="reset" value='重置' class="findSub"/></h2>
+            </form>
+        </div>  
+    </div>  
+    <div id="backgroundPopup"></div>
+</body>
+</html>

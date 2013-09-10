@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>授权管理</title>
+<link href='__PUBLIC__/{$mcss_app}/css/common.css' rel='stylesheet' type='text/css'>
+<link href='__PUBLIC__/Themes/{$mcss_theme}/css/common.css' rel='stylesheet' type='text/css'>
+<script src="__PUBLIC__/js/jquery.js"></script>
+<script src='__PUBLIC__/jusaas/js/common.js'></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	getAllFunction();
+	showSavedShortcuts();
+});
+
+function getUserRights()
+{
+	var urlpath="__APP__/SYS/Admin/getUsers";	
+	$.ajax({
+	   type: "POST",
+	   url: urlpath,
+	   dataType:'json',
+	   error: function(){ //如果出错，执行函数  
+		 alert('Error ajax');  
+	   },  
+	   success: updatePage	
+	}); 	
+}
+getUsers();
+var alluser;
+function getUsers()
+{
+
+	var urlpath="__APP__/SYS/Admin/getUsers";	
+	$.getJSON(
+    urlpath,
+    function(data) {
+		alluser = data;
+		createUserList("");
+	});
+	 	
+}
+function createUserList(word)
+{	
+	var r="";
+	var loginuser=getCookie("mcss_loginuser");
+	for(i=0;i<alluser.length;i++)
+	{
+		v=alluser[i];
+		if(loginuser=='admin' || (loginuser!='admin' && v.name==loginuser))
+		{
+			r += "<li><a id='userstyle' href='javascript:void(0)' class='c1'  onmouseout=\"if(!isClick)this.className=\'c1\';\" onclick=\"isClick=true;$(\'.c2\').removeClass(\'c2\');this.className='c2';\"><span onclick='selectuser(this)' id='"+v.name+"' >"+v.name+"</span></li>" ;
+		}
+	}
+	$("#userlist ul").html(r);
+}
+function selectuser(a)
+{
+	currentuser = a.id;
+	showSavedShortcuts(a);
+	
+}
+
+function showSavedShortcuts(a)
+{
+	//alert();
+	var user='';
+	if (a)
+		user =a.id;
+
+    selectAllFunc(false);
+	var urlpath="__APP__/SYS/Admin/getShortcutsOfUser";	
+	$.get(
+    urlpath,
+    {user:user},
+    function(data) {
+        //alert(data);
+    	var arr=data.split(",");
+        var objArr = $(":checkbox") ; 
+        jQuery.each(objArr, function(i, val) {
+            var i = data.indexOf(val.id);
+            if (i >-1) {
+                val.checked=true;
+            }
+            else{
+               val.checked=false;
+            }
+        });
+    })
+}
+
+var saved=true;
+function selectAll(a)
+{
+	if (a.checked)
+	{
+		$("."+a.id).show();
+	}
+	else
+	{
+		$("."+a.id).hide();
+	}
+
+	$("."+a.id).attr("checked",a.checked);
+	saved=false;
+}
+
+function showgroup(a,groupno)
+{
+	if (a.innerHTML="+")
+	{
+		$("."+groupno).show();
+	}
+	else
+	{
+		$("."+groupno).hide();
+	}
+}
+
+function selectAllFunc(check)
+{
+$(":checkbox").attr("checked",check);
+saved=false;
+}
+
+
+function getAllFunction()
+{
+	var role;//获得当前的角色
+	var roleList;//获得当前角色的权限列表
+	var urlpath="__APP__/SYS/Admin/getCharacterName";
+	$.post(urlpath,function(data){
+		role=data;
+		urlpath="__APP__/SYS/Admin/getFuncsOfRole";
+		$.getJSON(urlpath,{rolename:data},function(source){
+				roleList=source[0]['functions'];
+			    var s="";
+				urlpath="__APP__/SYS/Admin/getAllFunctions";	
+				$.getJSON(
+				urlpath,
+				function(data) {
+					$.each(data, function(i, v) {
+						if (v.groupno == "" || v.groupno == "0")
+						{
+							if(role=="admin"){
+								s = "<tr><td><input type='CheckBox' class='functiongroup' onclick='selectAll(this);' id='"+v.no+"' title='"+v.name+"'/>" + v.name +  "</td></tr>";
+								$("#functions").append(s);
+							}else{
+								if(roleList.indexOf(v.name)>-1){
+									s = "<tr><td><input type='CheckBox' class='functiongroup' onclick='selectAll(this);' id='"+v.no+"' title='"+v.name+"'/>" + v.name +  "</td></tr>";
+									$("#functions").append(s);
+								}
+							}
+						
+					$.each(data, function(i1, v1) {
+						if (v1.groupno == v.no) {
+							if(role=="admin"){
+								s = "<tr><td class='"+v.no+"'>&nbsp;&nbsp;&nbsp;<input type='CheckBox' id='"+v1.no+"' class='"+v.no+"' title='"+v1.name+"'/>" + v1.name +  "</td></tr>";   
+								$("#functions").append(s);    
+							}else{
+								if(roleList.indexOf(v1.name)>-1){
+									s = "<tr><td class='"+v.no+"'>&nbsp;&nbsp;&nbsp;<input type='CheckBox' id='"+v1.no+"' class='"+v.no+"' title='"+v1.name+"'/>" + v1.name +  "</td></tr>";
+									$("#functions").append(s); 
+								}
+							}
+						}
+					})
+						}
+					})
+				});
+		});
+	});
+}
+
+var currentuser="";
+function save(){
+	//var funcs="4order|订单:neworder|新建订单,list_order|订单列表;customer|客户:newcustomer|新建客户";
+	var funcs="";
+	var groups=$(".functiongroup");
+	
+	$.each(groups, function(i, v) {
+		if (v.checked || !v.checked)
+		{
+			
+			var functions=$("."+v.id);
+			$.each(functions, function(i1, v1) {
+			if (v1.checked)
+			{
+				funcs = funcs + v1.id+"|"+v1.title+",";
+			}
+		})
+		}
+	})
+	//alert(funcs);
+
+    var urlpath="__APP__/SYS/Admin/saveFunctionShortcut";	
+	$.get(
+        urlpath,
+        {username:currentuser,functions:funcs},
+        function(data) {
+           // alert(data);
+			if (data=="ok"){
+				alert("保存成功！");
+				window.parent.location.reload();
+			}else
+				alert("保存失败！错误信息："+data);
+		}
+
+    );
+}
+
+function cancel()
+{
+$("#functions").empty();
+getAllFunction();
+}
+</script>
+</head>
+<body style="padding:0 10px">
+<div class="titles">常用功能设置</div>
+<table cellpadding="0" cellspacing="0" width="100%">
+  <tr>
+    <td>
+		<table border="1" width="100%" cellpadding="0"  cellspacing="0" id="setright_table">
+		<thead>
+		<tr>
+			<td width='40%' >用户</td>
+				
+			<td width='60%' >功能菜单</td>
+		</tr>
+		</thead>
+		<tr>
+			<td style="vertical-align:top;">
+				<div id="userlist">
+				<ul></ul>
+				</div>
+			</td>
+			<td style="vertical-align:top; padding:10px 0 0 20px">
+				<div style="overflow:hidden; zoom:1; text-align:left; padding-top:5px;height:25px;" ><span onClick="selectAllFunc(true);" class="formbutton "/>全选</span><span class="formbutton" onClick="selectAllFunc(false);" />全不选</span></div>
+				<table cellpadding="0" cellspacing="0" class="functions" id="functions" border="0"></table>
+			</td>
+		</tr>
+	  </table>
+	</td>
+  </tr>
+  <tr>
+    <td class='tabletr' colspan="2" align="center"><br>
+    <input type="button" value="确定" onClick="save();" class="formbutton" >&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="button" value="重置" onClick="cancel();" class="formbutton"  ></td>
+  </tr>
+</table>
+</body>
+</html>

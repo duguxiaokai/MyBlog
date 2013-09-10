@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> <!--dtd协议-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>笔记本</title>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script src="__PUBLIC__/jusaas/js/dom.js" ></script>
+<script src="__PUBLIC__/jusaas/js/utils.js" ></script>
+<script src="__PUBLIC__/js/My97DatePicker/WdatePicker.js"></script>
+
+</head>
+
+<body style="padding:10px;">
+<div id='mcss_pagebar'></div>
+<table style='width:100%;'>
+<tr>
+<td style='vertical-align:top;'>
+<div id="formdata" class="formdataCon" style='text-align:center; padding:10px'></div>
+<div style='text-align:center; padding-bottom:10px'>
+	<input type="button" onclick='saveRecord()' class="btn btn-green" value="保存"/>
+	<input type="button" onclick='sharePage(this)' class="btn btn-green" value="共享" id='sharebtn'/>
+</div>
+</td>
+<td  style='vertical-align:top;'>
+<div id="mcss_table" border='1' style='display:;'></div>
+</td></tr></table>
+</body>
+</html>
+
+<script type="text/javascript">
+var form;
+$(document).ready(function()
+{
+	form=new Autoform('formdata',{modelid:"oa_note_my"}); 
+	form.run();
+	
+	var field_dealing = [{'name':showName}];	
+	mcssTable=new MCSSTable({tableid:"mcss_table",modelid:"oa_note_my",showfirst:true,afterLoadRows:afterLoadRows,special_field_show:field_dealing});
+	mcssTable.run(afterRun);
+});
+
+
+function afterRun(mctable)
+{
+	mctable.showAction('firstpage,lastpage,RecordCount,pagerows',false);
+}
+function showName(value,record)
+{
+	var s=value.replace(/<[^>]+>/g,"");//去掉所有的html标记
+	if (s.length>20)
+		s=s.substr(0,20)+"......";
+	s="<a id='"+record.id+"' onclick='editnode(this)' style='cursor:pointer;'>"+s+"</a>";
+	return s;
+
+}
+
+function editnode(e)
+{
+	form.recordid=e.id;
+	form.fetchData(autoform_initData,form);	
+}
+
+function afterLoadRows(mctable)
+{
+}
+
+function last_td(id)
+{
+	return "<a class='smallbut mcsstable_record_edit' onClick='find_urledit(this,\""+id+"\")'>编辑</a><a class='smallbut mcsstable_record_del' onClick='find_url_del(\""+id+"\")'>删除</a>";
+}
+
+//更新父窗体的任务列表
+function reload_parent_mctable(id,hint,mcform)
+{
+	if (window.parent.mcss_callback_reload_mctable)
+		parent.mcss_callback_reload_mctable();
+	else
+	{
+		var tableid=common_getParam("tableid");
+		if (tableid)
+			parent.mcsstable_loaddatarows(tableid);
+	}		
+	window.parent.ClosePop();
+}
+
+//保存新增表单后刷新mctable
+function refresh_mctable(recordid,hint,mcform)
+{	
+	mcsstable_loaddatarows("mcss_table");
+	
+}
+
+function saveRecord()
+{
+	form.save(false,afterclosenote,false);
+	form.setFieldValue('id','');
+	form.setFieldValue('name','');
+}
+
+function afterclosenote()
+{
+	form.recordid='';
+	mcsstable_loaddatarows("mcss_table");	
+	window.parent.$(".ui_close").click();
+}
+
+function sharePage(e)
+{
+	var id=form.getFieldValue("id");
+	if(!id)
+	{
+		mcdom.alert('请先保存','共享','info','fadeout');
+		return;
+	}
+	var url=g_rooturl+"/index.php/List/List/viewRecord/modelid/oa_note_view/id/"+id;
+	utils_sharePage(e,url);
+}
+</script>

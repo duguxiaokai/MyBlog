@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title></title>
+    <link href='__PUBLIC__/themes/yellow/css/common.css' rel='stylesheet' type='text/css'>
+	<script src="__PUBLIC__/js/jquery.js" ></script>
+	<script src="__PUBLIC__/jusaas/js/common.js" ></script>
+	<script type="text/javascript">
+	$(document).ready(function() { 
+	checkloginuser();
+	//click();
+	});
+	</script>
+<style type="text/css">
+div,body{ margin:0; padding:0;}
+img{ border:0;}
+.welcome{ width:100%; height:82px; margin:0 auto; background:url(__PUBLIC__/projects/yoga/imagehome_bj.gif) repeat-x center center;}
+.chunse{ width:100%; height:21px; margin:0 auto; background:url(__PUBLIC__/projects/yoga/imagechunse_bj.gif) repeat-x;}
+.logo { width:100%; height:367px; margin:0 auto; border-bottom:1px solid #999999; background-color:#f2f2f2;}
+.logo .big{ width:355px; height:333px; margin:0 auto; padding:15px 0 0 0;}
+.but{ width:100%; height:100%; margin:0 auto; border-top:1px solid #f2f2f2; background-color:#e2e2e2;}
+.but .but_img{ width:639px; height:71px; margin:11px auto 0;}
+.but .but_img form input{ float:left; width:198px; height:42px; padding:5px 0 0 5px;}
+.but .but_img form span{ float:left; width:213px; height:53px; /*background:url(__PUBLIC__/projects/yoga/image/but_border_bj.gif) no-repeat right bottom;*/}
+.but .but_img form span.remove{ background:none;}
+</style>
+</head>
+<body style="background:#f2f2f2;">
+    <div class="logo">
+        <div class="big">
+        <img src="__PUBLIC__/projects/yoga/image/logo_big.gif" />
+        </div>
+    </div>
+    <div class="but">
+    	<div class="but_img123" style="text-align:center;">
+        	<form>
+            <span><a href="__APP__/List/List/list2/param:table/list_class">
+			<img id="but_first" name="" type="image" src="__PUBLIC__/projects/yoga/image/but_classlist.gif" hidefocus="true" /></a></span>
+            <span>
+			<a href="javascript:void(0)"><img id="but_second" name="" type="image" src="__PUBLIC__/projects/yoga/image/but_monthly.gif" hidefocus="true" /></a></span>
+            <span class="remove"><a href="__APP__/yoga/Class/addclass">
+			<img id="but_third" name="" type="image" src="__PUBLIC__/projects/yoga/image/but_addnewclass.gif" hidefocus="true" /></a></span>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+function checkloginuser(){
+   
+	var role=getCookie("mcss_loginuserrole");
+	if (role!=='admin')
+	{
+		$("#but_first,#but_third").hide();
+		$("#but_second").attr("src","__PUBLIC__/projects/yoga/image/but_myclasslist.gif");
+		$("#but_second").attr("src","__PUBLIC__/projects/yoga/image/but_myclasslist.gif");
+		$("#but_second").click(function(){
+			window.location.href='__APP__/List/List/list2/param:table/list_class_my';
+		})
+
+	}
+	else
+	$("#but_second").click(function(){
+		window.location.href='__APP__/yoga/Tongji/getthismonthstat';
+	})
+ 
+}
+
+</script>

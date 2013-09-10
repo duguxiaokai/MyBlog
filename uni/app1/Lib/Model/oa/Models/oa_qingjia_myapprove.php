@@ -1,0 +1,26 @@
+<?php return array(
+'id'=>"oa_qingjia_myapprove",
+'title'=>"等待我审批的请假单",
+'base'=>"oa_qingjia",
+'filter'=>"approver=Me()",
+'actions'=>"edit,search,page",
+'wayofcopyfields'=>"parent_and_child",
+'fields'=>array(
+ array('id'=>"id",'name'=>"ID",),
+ array('id'=>"staffid",'name'=>"请假人",'readonly'=>"true",),
+ array('id'=>"type",'name'=>"请假类别",'readonly'=>"true",),
+ array('id'=>"begindate",'name'=>"开始日期",'readonly'=>"true",),
+ array('id'=>"enddate",'name'=>"结束日期",'readonly'=>"true",),
+ array('id'=>"span",'name'=>"请假小时数",'readonly'=>"true",),
+ array('id'=>"reason",'name'=>"请假原因",'readonly'=>"true",),
+ array('id'=>"approver",'name'=>"审批人",),
+ array('id'=>"status",'name'=>"状态",),
+ array('id'=>"notes",'name'=>"备注",),
+ array('id'=>"SYS_ADDUSER",'name'=>"创建者",),
+ array('id'=>"SYS_ADDTIME",'name'=>"创建时间",),
+ array('id'=>"SYS_EDITUSER",'name'=>"更新人",),
+ array('id'=>"SYS_EDITTIME",'name'=>"更新时间",),
+ array('id'=>"SYS_ORGID",'name'=>"组织ID",),
+),
+
+) ?>

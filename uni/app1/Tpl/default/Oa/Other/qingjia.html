@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> <!--dtd协议-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>请假</title>
+<link href="__PUBLIC__/themes/default/css/otherweb.css" rel="stylesheet" type="text/css">
+
+<script src="__PUBLIC__/js/jquery.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script src='__PUBLIC__/js/popup.js'></script>
+<script src="__PUBLIC__/jusaas/js/dom.js?dialog=succinct"></script>
+<script type="text/javascript">
+var form1;
+var my_qingjia;
+$(document).ready(function(){
+
+	form1=new Autoform('qingjia_write',{"modelid":"oa_qingjia_write"});   
+	form1.run();
+	
+	
+	my_qingjia=new MCSSTable({tableid:"qingjia_my",modelid:'oa_qingjia_my',first_td_name:'-',showRecordActionAtLast:true,deleteRow:deleteMyRecord});
+	my_qingjia.run( );	
+
+	var qingjia_awaitmyapprove=new MCSSTable({tableid:"qingjia_awaitmyapprove",modelid:'oa_qingjia_awaitmyapprove',first_td_name:'-',showRecordActionAtLast:true});
+	qingjia_awaitmyapprove.run( );		
+ 	
+	var qingjia_myapprove=new MCSSTable({tableid:"qingjia_myapprove",modelid:'oa_qingjia_myapprove',first_td_name:'-',showRecordActionAtLast:true});
+	qingjia_myapprove.run( );	
+
+	$(".WorksMenu ul li").click(function()
+		{
+			$(this).addClass("nav").siblings().removeClass("nav");
+			var index=$(".WorksMenu ul li").index($(this));
+			$(".WorksContent > .xxinfo").eq(index).show().siblings().hide();
+		});
+	
+});
+ 
+
+function deleteMyRecord(id)
+{
+	for(var i=0;i<my_qingjia.data.length;i++)
+	{
+		if (my_qingjia.data[i][my_qingjia.keyfield]==id)
+		{
+			if (my_qingjia.data[i].status!='doing')
+			{
+				alert("不能删除已审批的请假单。");
+				return;
+			}
+		}
+	}
+	if(confirm("确认要删除吗?"))
+	{
+		mcsstable_deleteRowsNow(my_qingjia,id);
+	}	
+	
+}
+function saveRecord(){
+	form1.save(false,refreshPage);
+}
+function refreshPage()
+{
+	document.location.href=document.location.href;
+}
+</script>
+</head>
+
+<body class="padding">
+<!--<div id='mcss_pagebar'></div>-->
+<div class="todayList" style="height:auto">
+	<div class="WorksMenu">
+		<ul>
+		<li class="nav">填写请假单</li>
+		<li>我的请假单</li>
+		<li>待我审批</li>
+		<li>我审批的</li>
+		</ul>
+	</div>
+	<!--基本信息 start-->
+	<div class="WorksContent">
+		<div class="xxinfo">
+			<div id='qingjia_write' style="padding:10px 0;"></div>
+			<div class="Submitbutton">
+				<a href="javascript:void(0)" onclick='saveRecord()' class="big_btn big_btn-green">保存</a>
+			</div>
+		</div>
+		<div class="xxinfo" style='display:none'>
+			<table id="qingjia_my" width="100%" cellpadding="0" cellspacing="0"></table>
+		</div>
+		<div class="xxinfo" style='display:none'>	
+			<table id="qingjia_awaitmyapprove" width="100%" cellpadding="0" cellspacing="0"></table>
+		</div>
+		<div class="xxinfo" style='display:none'>	
+			<table id="qingjia_myapprove" width="100%" cellpadding="0" cellspacing="0"></table>
+		</div>
+	</div>
+</div>
+
+<div id='background' class='background'></div><div id='progressBar' class='progressBar'>数据加载中，请稍等...</div>
+</body>
+</html>

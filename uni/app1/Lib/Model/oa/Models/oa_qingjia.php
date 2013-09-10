@@ -1,0 +1,26 @@
+<?php return array(
+'id'=>"oa_qingjia",
+'title'=>"请假表",
+'tablename'=>"oa_qingjia",
+'filter'=>"SYS_ORGID=orgid()",
+'actions'=>"add,del,edit,page",
+'cols'=>"2",
+'fields'=>array(
+ array('id'=>"id",'name'=>"ID",'fieldtype'=>"int",'visibleWhenAdd'=>"false",'prop'=>"PRIMARYKEY;AUTO_INCREMENT",),
+ array('id'=>"staffid",'name'=>"请假人",'fieldtype'=>"int",'type'=>"dropdown",'data'=>"sql:select id,name from sys_staff where SYS_ORGID=orgid()",'defaultdata'=>"Me()",'forsearch'=>"true",'nullable'=>"false",),
+ array('id'=>"type",'name'=>"请假类别",'fieldtype'=>"string",'type'=>"dropdown",'data'=>"事假,病假,调休,年假,婚嫁,丧假,生育假,其它",'forsearch'=>"true",'nullable'=>"false",),
+ array('id'=>"begindate",'name'=>"开始日期",'fieldtype'=>"datetime",'type'=>"date",'defaultdata'=>"today()",'forsearch'=>"true",'nullable'=>"false",),
+ array('id'=>"enddate",'name'=>"结束日期",'fieldtype'=>"datetime",'type'=>"date",'defaultdata'=>"today()",'forsearch'=>"true",'nullable'=>"false",),
+ array('id'=>"span",'name'=>"请假小时数",'fieldtype'=>"float",'forsearch'=>"true",'nullable'=>"false",),
+ array('id'=>"reason",'name'=>"请假原因",'fieldtype'=>"string",'length'=>"500",'type'=>"textarea",'forsearch'=>"true",'nullable'=>"false",),
+ array('id'=>"approver",'name'=>"审批人",'fieldtype'=>"int",'type'=>"dropdown",'data'=>"sql:select id,name from sys_staff where  (statue=1 or statue='') and  SYS_ORGID=orgid()",'forsearch'=>"true",'nullable'=>"false",),
+ array('id'=>"status",'name'=>"状态",'type'=>"dropdown",'data'=>",doing:待审批,valid:同意请假,invalid:无效",'defaultdata'=>"doing",),
+ array('id'=>"notes",'name'=>"备注",'fieldtype'=>"string",'length'=>"200",),
+ array('id'=>"SYS_ADDUSER",'name'=>"创建者",'fieldtype'=>"string",'length'=>"50",'type'=>"SYS_ADDUSER",'visibleWhenAdd'=>"false",'readonly'=>"true",'forsearch'=>"true",),
+ array('id'=>"SYS_ADDTIME",'name'=>"创建时间",'fieldtype'=>"datetime",'type'=>"SYS_ADDTIME",'visibleWhenAdd'=>"false",'readonly'=>"true",'forsearch'=>"true",),
+ array('id'=>"SYS_EDITUSER",'name'=>"更新人",'fieldtype'=>"string",'length'=>"50",'type'=>"SYS_EDITUSER",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"SYS_EDITTIME",'name'=>"更新时间",'fieldtype'=>"datetime",'type'=>"SYS_EDITTIME",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"SYS_ORGID",'name'=>"组织ID",'fieldtype'=>"int",'type'=>"SYS_ORGID",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+),
+
+) ?>

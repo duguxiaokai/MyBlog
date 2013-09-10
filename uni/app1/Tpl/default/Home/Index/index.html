@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>MCSS主页</title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/themes/default/menu/menu.css" />
+
+	<script src="__PUBLIC__/js/jquery.min.js" ></script>
+	<script src="__PUBLIC__/jusaas/js/common.js"></script>
+	<script src="__PUBLIC__/jusaas/js/home.js" ></script>
+	<script src="__PUBLIC__/jusaas/js/menu.js" ></script>
+</head>
+<body>
+<!-- 顶部的开始 -->
+	<div class='top' id='mcss_header'>
+    <table width="100%" border="0">
+    <tr>
+    <td width="50px"  style="vertical-align:center;">
+	  	<a href='http://www.smesforce.com/' target='_blank'><img src="__PUBLIC__/Images/logo.png" style="height:30px" /></a>
+    </td>
+    <td width="250px">
+    </td>
+    <td style="text-align:right;vertical-align:top;">
+    	<span class='labellink' title='设置' onclick='home_mysetting()'>{$Think.session.loginuser}</span>
+          <a href="__APP__/Home/Index/logout" target="_top">[退出]</a>
+        <br /><span><input type="CheckBox" id="hideheader" onClick="openNew(this)" title='总是在新窗口打开页面'/>新窗口</span>
+    </td>
+    </tr>
+    </table>
+</div>
+<!-- 顶部的结束 -->
+
+<!-- 功能菜单 -->
+<div id='mcss_menu'></div>
+<div id='subwindow123'>
+
+<div id='subwinheader'></div>
+
+
+<div style="width:100%" class='subwindow' id='subwindiv_0'>
+<iframe id="mainiframe" name="mainiframe"  src="__APP__/Home/Index/home" style="width:99.7%;height:500px;"></iframe>
+</div>
+
+</div>
+</body>
+</html>
+<script type="text/javascript">
+</script>
+	

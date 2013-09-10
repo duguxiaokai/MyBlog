@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<link rel='stylesheet' type='text/css' href='__PUBLIC__/jusaas/mctree/MCTree_left.css'>
+	<link href="__PUBLIC__/themes/default/css/common.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/themes/default/css/otherweb.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jusaas/calendar/McssCalendar.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="__PUBLIC__/js/jquery.js" ></script>
+<script type="text/javascript" src='__PUBLIC__/js/popup.js'></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/calendar/McssCalendar.js"></script>
+	
+<style>
+
+</style>
+<title>信息中心</title>
+
+</head>
+<body>
+开始日期：<input id="begintime"  type="text" onclick="autoform_selectDate('yyyy-MM-dd')" style="width:242px" name="formdata[dealtime]">
+结束日期：<input id="lasttime"  type="text" onclick="autoform_selectDate('yyyy-MM-dd')" style="width:242px" name="formdata[dealtime]">
+<input type='button' value='查看' class='formbutton' onclick="search()">
+<td style='vertical-align:top;'>
+<table id="filelist" width="100%"></table>  
+</td></tr></table>
+</body>
+</html>
+<script>
+var form1,mcssTable;
+var wl;
+var mcssTable;
+var currentNodeId;
+var count=1;
+$(document).ready(function(){
+	filter =" begindate >= (SELECT subdate( curdate( ) , date_format( curdate( ) , '%w' ) -1 ) ) AND begindate <= ( SELECT subdate( curdate( ) , date_format( curdate( ) , '%w' ) -7 ) ) AND enddate >= (SELECT subdate( curdate( ) , date_format( curdate( ) , '%w' ) -1 ) ) AND enddate <= (SELECT subdate( curdate( ) , date_format( curdate( ) , '%w' ) -7 ))";
+	mcssTable=new MCSSTable({tableid:"filelist",modelid:"oa_task_allstafflist",filter:filter,showfirst:true,first_td_name:"-",width:'100%',showRecordActionAtLast:true});
+	mcssTable.run();
+});
+
+
+function search(){
+	var begintime=$('#begintime').val();
+	var lasttime=$('#lasttime').val();
+	if(begintime==''  && lasttime){
+			
+		mcssTable.filter =" enddate <= '"+lasttime+"'";
+		mcsstable_loaddatarows(mcssTable.tableid);	
+	
+	}else if(begintime  && lasttime==''){
+		mcssTable.filter =" begindate >= '"+begintime+"'";
+		mcsstable_loaddatarows(mcssTable.tableid);
+	
+	}else if(begintime && begintime){
+		if(begintime>lasttime){
+			alert('开始日期应该小于结束日期,请重新选择');
+			begintime=$('#begintime').val('');
+			lasttime=$('#lasttime').val('');
+		}else{
+			mcssTable.filter =" begindate >= '"+begintime+"' AND  enddate <= '"+lasttime+"'";
+			mcsstable_loaddatarows(mcssTable.tableid);	
+		}
+	}else {
+		mcssTable.filter =" begindate >= (SELECT subdate( curdate( ) , date_format( curdate( ) , '%w' ) -1 ) ) AND begindate <= ( SELECT subdate( curdate( ) , date_format( curdate( ) , '%w' ) -7 ) ) AND enddate >= (SELECT subdate( curdate( ) , date_format( curdate( ) , '%w' ) -1 ) ) AND enddate <= (SELECT subdate( curdate( ) , date_format( curdate( ) , '%w' ) -7 ))";
+		mcsstable_loaddatarows(mcssTable.tableid);
+	}
+}
+
+
+</script>

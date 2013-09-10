@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Calendar</title>
+<script src="jquery.js" type="text/javascript"></script>
+<script src="McssCalendar.js" type="text/javascript"></script>
+<script src="common.js" type="text/javascript"></script>
+</head>
+<body>
+	<div id='mycalear'></div>
+</body>
+
+<script type="text/javascript">
+var data=[{date:'2012-06-19',work:'我今天的工作1'},{date:'2012-06-19',work:'我今天的工作2'},{date:'2012-06-20',work:'我今天的工作3'}];
+var mccalendar=new McssCalendar({id:'mycalear',onclick:opendate,data:data,beforeShowMonth:getdata,defaultDate:new Date(),mostRows:1,mostWords:5,showMydata:showMydata1,showAdd:true,onAdd:addTask,calendartype:'day',showCalendartype:true});
+mccalendar.run();
+	
+function opendate(date)
+{
+alert("单击了格子");
+//window.open('calendar.html');
+}
+function getdata(cal)
+{
+//alert(cal.params.data);
+}
+function showMydata1(date,data,defaultdata)
+{
+	//var d="2012-06-19";
+	//if (date==d)
+	//	return "<div style='color:red'>"+defaultdata+"</div>";
+	return defaultdata;
+}
+function addTask(cal,date)
+{
+alert(date);
+cal.refreshAday(date);
+}
+</script>

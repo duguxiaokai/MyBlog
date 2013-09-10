@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" >
+<title>domyPP-项目计划表，在线甘特图，可导出到Excel</title>
+<link href="__PUBLIC__/themes/default/css/common.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/themes/default/css/otherweb.css" rel="stylesheet" type="text/css">
+<link href='__PUBLIC__/projects/oa/css/gantetu.css' rel='stylesheet' type='text/css'>
+
+<script src="__PUBLIC__/js/jquery.js" ></script>
+<script src='__PUBLIC__/js/popup.js'></script>
+<script src='__PUBLIC__/js/DatePicker/WdatePicker.js'></script>
+<script src="__PUBLIC__/jusaas/js/common.js"></script>
+<script src="__PUBLIC__/lang/cn/language.js"></script>
+<script src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script src="__PUBLIC__/jusaas/js/utils.js"></script>
+<script src="__PUBLIC__/jusaas/js/dom.js"></script>
+<script src="__PUBLIC__/jusaas/js/MCSSTableEditor.js"></script>
+<script src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script src="__PUBLIC__/jusaas/js/MCDateTime.js" ></script>
+<script src="__PUBLIC__/jusaas/js/pm.js" ></script>
+<style type="text/css">
+</style>
+</head>
+<body>
+<div class="sysLogo">
+<table style='width:100%;' id='header_tbl'>
+<tr>
+<td style='width:80px;padding:2px;' id='logo_td'>
+	<img onclick="about(this);" src="__PUBLIC__/themes/default/images/logo.png" style="padding-left:2px;width:120px;height:50px;cursor:pointer;" alt="doPP logo" />
+</td>
+<td style="float:left;padding:2px;" id="td_topmenu">
+<select id='select_lang' onchange="changeLanguage(this);" style="border:none;">
+<option value='cn'>中文</option>
+<option value='ft'>繁體</option>
+<option value='en'>English</option>
+</select>
+<a href="javascript:" id='a_bug' onclick="addbug(this);" title="反馈" class="tipsimple" >反馈</a>
+<a href="javascript:" id='a_set' onclick="setting(this);" title="设置" class="tipsimple" style="display:none;">设置</a>
+<a href="javascript:" id='a_user' onclick="showUserinfo();" title="用户名" class="tipsimple" >{$Think.session.loginuser}</a>
+<a href="javascript:" id='a_logout' onclick="outprompt();" title="退出" class="tipsimple"  style="display:none;">退出</a>
+<a href="javascript:" id='a_login' onclick="uni_login(this);" title="登录" class="tipsimple"  style="display:none;">登录</a>
+<a href="javascript:" id='a_signup' onclick="signup(this);" title="注册" class="tipsimple"  style="display:none;">注册</a>
+<br />
+<div style="padding-top:2px">
+<br />
+<a href="javascript:" id='newproject'  title="创建一个新的项目" class="tipsimple"  style="display:;">新建</a>
+<a href="javascript:" id='a_myprojects' onclick="showmyprojects()" title="我的项目" class="tipsimple"  style="display:;">我的项目</a>
+<a href="javascript:" id='a_publicprojects' onclick="showPublicProjects()" title="" class="tipsimple"  style="display:;">公开的项目</a>
+</div>
+<a href="javascript:" id='a_mycalendar' onclick="mycalendar(this);" title="日历" class="tipsimple" style="display:none;" >日历</a>
+<a href="javascript:"  class="tipsimple"  style="padding:100px;display:none;">UPP:谁都可以写个项目计划，分享计划</a>
+</td>
+<td style="padding:2px;vertical-align:top;">
+<div id='browserinfo'></div>
+</td>
+<td style="float:right;;padding:2px;">
+</td>
+</tr>
+</table>
+</div>
+<div id='project_header' class='project_header' style='display:none'></div>
+<div class="WorksMenu" id='div_mainmenu' style="display:none;">
+	<ul>		
+	<li id='project_info' onclick='showThisTab(this,"tab_project")' style='font-size:16px;'>项目信息</li>
+	<li class="nav" id='taskgantetu' onclick='showThisTab(this,"tab_taskgantetu")' >任务干特图</li>
+	<li id='mcss_sharingbutton' onclick='utils_sharePage(this)' >共享</li>
+	<li id='li_discussion' onclick='showThisTab(this,"tab_discussion")'>记事</li>
+	<li id='myprojects' style="display:none;" onclick='showThisTab(this,"tab_table_myprojects")'>我的项目</li>
+	<li id='li_all' onclick='showThisTab(this)'>所有</li>
+	</ul>
+</div>
+
+<!--基本信息 start-->
+<div class="WorksContent">
+	<div id='tabname_project' class='tabname' style='display:none'>项目基本信息</div>
+	<div id="tab_project" class="xxinfo" style='display:none'>
+		<div id='msform_editproject' style='width:600px;'></div>
+		<a href="javascript:void(0)" id='savebutton' onclick='saveRecord()' class="big_btn big_btn-green" style="display:none;">保存</a>		
+	</div>
+	<div id="tab_taskgantetu" class="xxinfo">
+		<div id='tabname_gantetu' class='tabname' style='display:none;'>任务甘特图</div>
+		<div id='msform_viewproject' style='width:600px;'></div>
+		<div id='gantetu' class="gantetuCon"></div>
+	</div>
+	<div id="sharepage" class="xxinfo" style='display:none'>
+	</div>
+	<div id="tab_discussion" class="xxinfo" style='display:none'>
+		<div id='tabname_discussion' class='tabname' style='display:none'>讨论</div>
+		<div id='table_discussion'></div>
+	</div>
+	<div id="tab_table_myprojects" class="xxinfo" style='display:none'>
+		<input type='radio' name='myprojecttype' id='recentprojects' onclick='showproject(this)'  /><label for='recentprojects'>最近打开的</label>
+		<input type='radio' name='myprojecttype' id='projects_createdbyme'  onclick='showproject(this)' /><label for='projects_createdbyme'>我创建的</label>
+		<input type='radio' name='myprojecttype' id='projects_sharetome'  onclick='showproject(this)' /><label for='projects_sharetome'>共享给我的</label>
+		<div id='table_recentprojects'></div>
+		<div id='table_myprojects'></div>
+		<div id='table_sharetome'></div>
+	</div>
+	<div id="tab_publicprojects" class="xxinfo" style='display:none'>
+		<div id='table_publicprojects'></div>
+	</div>
+</div>	
+
+<script type="text/javascript">
+//var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+//document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F35a20a00be201fa9a257e423b6f54444' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<div style='padding-top:900px' id='pagebottom'></div>
+</body>
+</html>
+
+<script type="text/javascript">
+/*var mcss_lang=getCookie("mcss_lang");
+if(!mcss_lang)
+	mcss_importJS("lang/cn/language.js");
+else
+	mcss_importJS("lang/"+mcss_lang+"/language.js");
+*/
+var mcform_project;
+var mctable_task,mcsstable_discussion;
+var gantetu_work;
+var project_id,projectmodelid,taskmodelid;
+projectmodelid=getParam("detailproject_modelid");
+if(!projectmodelid)
+	projectmodelid='oa_project_basic';
+
+project_id=common_getParam("id");
+var isShared=utils_isSharingPage();
+if ('{$sharekeycheck}'=="ERROR")
+	isShared=false;
+var loginuser;
+var mcss_lang=common_getParam("lang");
+if (!mcss_lang)
+	mcss_lang=getCookie("mcss_lang");
+if (!mcss_lang) mcss_lang='cn';
+
+var g_userid="{$Think.session.loginuserid}";
+if (mcss_lang && mcss_lang!='cn')
+{
+	$("#div_mainmenu").hide();
+	$("#td_topmenu").hide();
+}
+else
+{
+	$("#div_mainmenu").show();
+	$("#td_topmenu").show();
+}
+
+if (isShared)
+{
+	$("#td_topmenu").hide();
+	$("#project_header").show();
+	$("#li_all").click();
+}
+checklogin();
+checkBrowser();
+//loadbaidu();
+
+$(document).ready(function() {
+	if (!loginuser)
+	{
+		//$("#a_myprojects").hide();//如果解决了未登录情况下查看最近打开历史的排序问题，就可以放开这行代码。
+	}
+
+	$("#newproject").click(function(){
+		if (gantetu_work && gantetu_work.mcsstable.cellEditor && gantetu_work.mcsstable.cellEditor.params.mcssData.state=="CHANGED" 
+			&& $(gantetu_work.mcsstable.table).find("tr").size()>2
+			)
+		{
+			mcdom.alert("数据未保存，请先保存或取消。",'警告','warning','fadeout');
+			$("#taskgantetu").click();
+		}
+		else
+		{
+			document.location.href=g_homeurl+"/Project/newProject";
+		}
+	})	
+
+	$("#select_lang").attr("value",mcss_lang);
+
+	$.post("__APP__/Oa/Project/getNewDiscussionCount",{project_id:project_id},function(n){
+		if (n>0)
+		$("#li_discussion").html($("#li_discussion").html()+"(<span style='color:red'>"+n+"</span>)");
+	})
+
+	if(isShared)
+	{
+		//var mcform_temp=new Autoform('msform_viewproject',{recordid:'url:KEYFIELD',modelid:'oa_project_basic_view'}); 
+		//mcform_temp.run();//样式不好看，不然可以放开
+	
+		loadTaskList();
+		$("#mcss_sharingbutton").remove();
+		if (!loginuser)
+		{
+			$("#setinfo").hide();	
+			$("#table_myprojects").hide();
+			//$("#myprojects").hide();
+			$("#table_myprojects").hide();
+		}
+		else
+		 	loadmyprojects();
+		//$("#tab_project").show();
+	}
+	else
+	{
+		if (project_id)
+		{
+		$.post(g_homeurl+"/OA/Project/ifAccessProject",{projectid:project_id},function(data){
+			if (data==0)
+			{
+			 	loadmyprojects();
+			 	$("#project_info").hide();
+			 	$("#taskgantetu").hide();
+			 	$("#mcss_sharingbutton").hide();
+			 	$("#tab_discussion").hide();
+			 	$("#li_discussion").hide();			 	
+			 	$("#li_all").hide();			 	
+				mcdom.alert(lang.noauthtovisit,'','info');		 	
+			 	return;
+			}
+			else
+			if (data==-1)
+			{
+			 	loadmyprojects();
+			 	$("#mcss_sharingbutton").hide();
+				mcdom.alert(lang.projectnotexists,lang.openproject,'info');
+			 	return;
+			}
+			else
+			{
+				if (data==2)
+				{
+					//isShared=true;
+					$("#mcss_sharingbutton").remove();					
+				}
+				loadTaskList();
+			}
+		})
+		}
+		else
+			showmyprojects();
+	}
+	setTimeout('setLanguage()',1000);
+	if (common_getParam("tag")=='demo')
+		$("#newproject").css('color','red');
+
+});
+
+
+//高亮显示某个tab
+function showThisTab(e,tab_id)
+{
+	$(".tabname").hide();
+	$(e).addClass("nav").siblings().removeClass("nav");
+	$("#"+tab_id).show().siblings().hide();
+	mcdom.closePopup();	
+	if(e.id=='li_all')
+	{
+		$("#tabname_project").show();
+		$("#tabname_gantetu").show();
+		$("#tabname_discussion").show();
+		$("#tab_project").show();
+		$("#tab_taskgantetu").show();
+		$("#tab_discussion").show();
+	}
+}
+
+//加载我的项目--最近打开的项目
+function loadmyprojects()
+{
+	//$("#recentprojects").click();
+	//openRecentProjects();
+}
+
+function openFromMyProject(h,recordid,record)
+{
+	h+="<a class='smallbut mcsstable_record_open' style='cursor:pointer;color:blue;' onclick='mcsstable_showpopup(\""
+	+g_homeurl+"/Project/projectdetail/id/"+recordid+"\",\"打开\",\"samewindow\")' title='打开'>打开</a>";
+	return h;
+}
+
+//加载项目任务列表
+function loadTaskList()
+{		
+	
+	taskmodelid=common_getParam("taskmodelid");
+	if (!taskmodelid)
+		taskmodelid="oa_project_task";
+	var tableview="tableedit";
+	if (isShared)
+		tableview="";
+
+	var params={task_modeld_id:taskmodelid,
+		showEveryDayTime:true,detailproject_modelid:projectmodelid,project_id:project_id,
+		afterGetProjectInfo:afterGetProjectInfo,
+		afterLoadRows:task_afterLoadRows,
+		afterGetProjectInfo:afterGetProjectInfo,pageposition:"rightdown",
+		tableview:tableview,
+		exportutl:"__APP__/Oa/Project/exportGanTetu"
+		
+		};
+		//可选参数：executerFieldId:'executerid'
+	gantetu_work=new McssGantetu("gantetu",params);
+	gantetu_work.run();
+	
+	//记录本地数据，共下次不登录的情况下可以找到。html5支持
+	if (window.localStorage && isShared)
+	{
+		var his="";
+		if (localStorage.dopp_openedprojects)
+		{
+			his=localStorage.dopp_openedprojects;
+			his=his.replace(project_id+',','');
+		}
+		his=project_id+","+his;
+		localStorage.dopp_openedprojects=his;
+	}
+
+	//把打开的项目记录到后台历史
+	$.post(g_homeurl+"/Oa/Project/SaveRecentProject",{projectid:project_id});
+	
+}
+
+function checklogin(username)
+{
+if (username)
+	$("#a_user").html(username);
+	
+loginuser=$("#a_user").html();
+if (loginuser)
+{
+	$("#a_set").show();
+	$("#a_logout").show();
+	$("#a_login").hide();
+	$("#a_signup").hide();
+}
+else
+{
+	$("#a_set").hide();
+	$("#a_logout").hide();
+	$("#a_login").show();
+	$("#a_signup").show();
+}
+}
+
+var mcsstable_my;
+function task_afterLoadRows(mctable,gantetu)
+{
+	if (mctable.temp_hasLoaded)
+		return;
+	mctable.temp_hasLoaded=true;
+	//获取项目讨论的评论记录
+	$.getJSON("__APP__/Oa/Project/getProjectDiscussionReply",{project_id:project_id},function(replyRows){
+		var filter1="project_id='"+project_id+"'";
+		var topicdealing=[{'content':showDiscussionContent},{"SYS_ADDTIME":showTimeUser}];
+		mcsstable_discussion=new MCSSTable({tableid:"table_discussion",modelid:"oa_pm_projectdiscussion",
+			filter:filter1+" and replyto_id=0",showfirst:true,pageposition:'rightdown',showRecordCount:true,
+			showRecordActionAtLast:false,showfirst:false,
+			replyRows:replyRows,
+			afterLoadRows:discussion_afterLoadRows,
+			deleteRow:discussion_deleteRow,hidecheckbox:true,
+			defaultValue:"project_id:"+project_id,diffLineCss:false,special_field_show:topicdealing,showfirst:true,hideLastTd:isShared});
+		mcsstable_discussion.run();	
+	})
+
+	if (isShared)
+	{
+		//$(".mcsstable_tr1").find("td:first").hide();
+		//$(".mcsstable_tr2").find("td:first").hide();
+		//$("#gantetu_gantetutableheader").find("th:first").hide();
+		$(".mcsstable_record_edit").remove();
+		$(".mcsstable_record_del").remove();
+		$(".gantetu_clearDate").remove();
+		$(".gantetu_moveTask").remove();
+		
+		$("#gantetu_gantetu_action_add").hide();
+		$("#gantetu_gantetu_action_del").hide();
+		$("#gantetu_gantetu_action_tableedit").hide();
+		$("#gantetu_gantetu_action_import").hide();
+		$("#gantetu_gantetu_action_import").hide();
+		$("#"+gantetu_work.id+"_projectrelated").hide();
+		$(".recordaction").hide();
+		$("#addgroupbtn_atlast").hide();
+		mcform_project.setReadOnly();
+		mcform_project.setFieldVisible('SYS_ADDUSER',false);
+		mcform_project.setFieldVisible('tag',false);
+	}
+	else
+	{
+		loadmyprojects();
+	}
+	//隐藏统计图标
+	$("img[src='http://eiv.baidu.com/hmt/icon/21.gif']").hide();
+	$("#pagebottom").remove();
+	
+}
+
+//更新项目标题
+function updateProjectTitle(name)
+{
+	document.title=name+"-在线项目计划表，在线甘特图，可导出到Excel";
+	var n=name;
+	if (n.length>20)
+		n=n.substr(0,20)+"..";
+	$("#project_info").html(n).attr('title',name);
+}
+
+function afterGetProjectInfo(record)
+{
+	updateProjectTitle(record.name);
+
+	mcform_project=new Autoform('msform_editproject',{recordid:'url:KEYFIELD',modelid:projectmodelid,saveButton:$("#savebutton").get(0)}); 
+	mcform_project.run(afterOpenProject);
+}
+
+function afterOpenProject()
+{
+	if(!isShared)
+		$("#savebutton").show();
+	else
+	{
+		var s=mcform_project.getFieldValue('name');
+		s="<span class='title_big'>"+s+"</span>";
+		s+="<br />开始:"+mcform_project.getFieldValue('begindate')+"   结束:"+mcform_project.getFieldValue('enddate')+"负责人:"+mcform_project.getFieldValue('executer');
+		s+="<br />描述："+mcform_project.getFieldValue('content');
+		//$("#project_header").html(s);
+		$("#project_info").html(mcform_project.getFieldValue('name'));
+		$("#tab_project").show();
+		//if (mcsstable_discussion.data.length>0)
+		$("#tab_discussion").show();
+		$("#"+mcform_project.getFieldID('content')).css({height:'',overflow:'visible'});
+		
+	}
+	mcform_project.addText('diyfields',lang.pm_diyfields_title);
+	if (common_getParam("tag")=='new')
+	{	
+		if (!mcform_project.getFieldValue('status'))
+			$("#project_info").click();
+	}
+	
+}
+
+function saveRecord()
+{
+	if (!mcform_project.getFieldValue('status'))
+		mcform_project.setFieldValue('status','plan');
+	mcform_project.save(false,afterSaveProject,false);
+}
+function afterSaveProject(id,info,mcform)
+{
+	var name=mcform.getFieldValue('name');
+	updateProjectTitle(name);
+	//需要更新甘特图的project_data数据，主要是日期，其实也应该更新完整的项目数据，暂时不了
+	gantetu_work.params.project_data.begindate=mcform.getFieldValue('begindate');
+	gantetu_work.params.project_data.enddate=mcform.getFieldValue('enddate');
+}
+
+function outprompt()
+{
+	mcdom.comfirm("确定要退出吗？",project_logout,{focus:'OK'});
+}
+function project_logout()
+{
+	$.post(g_homeurl+"/Home/Index/logout",function(url){
+		setCookie('mcss_loginuser','');	
+		window.location =g_homeurl+"/Project/projectdetail";
+	})
+}
+var mcform_login;
+function uni_login(e)
+{
+	var h="<div id='form_login'></div>";
+	h+='<div class="smallloginsubmit">'
+	+'<input type="button" class="btn btn-green" value="'+lang.signin+'" onclick="uni_gotologin();"  />'
+	+'</div>';
+
+	mcdom.showPopup(e,h,'',null,null,null,null,'登录');
+	mcform_login=new Autoform('form_login',{modelid:'sys_login'});
+	mcform_login.run(afterRunLogin);
+	
+}
+function afterRunLogin()
+{
+	mcform_login.addText('password','<a target="_blank" href="'+'__APP__/Home/Index/forgetPassword"><br />'+lang.forgetpassword+'?</a>');
+	if (getCookie('mcss_loginuser'))
+	{
+		mcform_login.setFieldValue('username',getCookie('mcss_loginuser'));
+		$("#"+mcform_login.getFieldID("password")).focus();
+	}
+	$("#form_login_password").keyup(function(event){
+		if(event.keyCode=='13')
+		uni_gotologin();
+	})
+}
+function uni_gotologin()
+{
+	var urlpath=g_homeurl+"/Home/Index/gotoLogin/";
+	var username=mcform_login.getFieldValue('username');
+	var password=mcform_login.getFieldValue('password');
+	$.post(urlpath,{username:username,password:password},function(msg){
+		uni_checkpass(msg,username);
+    }); 
+	
+}
+
+//打开最近项目
+function openRecentProjects()
+{
+	var params={};
+	if (!loginuser)
+	{
+		var his=localStorage.dopp_openedprojects;
+		if (his && his.substr(his.length-1,1)==',')//去掉最后的逗号
+		{
+			his=his.substr(0,his.length-2);
+			params.filter="id in ("+his+")";
+		}
+		
+	}
+	mcsstable_recentprojects=newMCSSTable('table_recentprojects','oa_project_recent',params);
+	mcsstable_recentprojects.run();
+}
+
+function uni_checkpass(msg,username){
+	if (msg=='1') {
+		document.location.href=document.location.href;
+		
+		checklogin(username);
+		
+		setCookie("mcss_loginuser",username);
+		mcdom.closePopup();
+		/*
+		if (mcsstable_my) mcsstable_my.reload();
+		mcform_project.setFieldValue('SYS_ADDUSER',username);
+		$("#a_myprojects").show();
+		if (!mcsstable_recentprojects)
+		{
+		}
+		*/
+	}
+	else
+	{
+		 if (msg=='0') {
+			alert(lang.usernameorpassworderror);
+		} else if (msg=='2') {
+			alert('验证码错误！');
+		} else if (msg=='3') {
+			alert('请选择组织！');
+		} else if (msg=='4'){
+			alert('此账号未激活,请激活后登录!');
+		}else if(msg=='5'){
+			alert("没有开通密码登录功能！请输入用户名！");
+		}
+	}
+	
+}
+
+var mcform_signup;
+function signup(e)
+{
+	var h="<div id='form_signup'></div>";
+	h+='<div class="smallloginsubmit">'
+	+'<input type="button" class="btn btn-green mcssingbutton" value="注册" onclick="uni_signup();"  />'
+	+'</div>';
+
+	mcdom.showPopup(e,h,'',null,null,null,null,'注册');
+	mcform_signup=new Autoform('form_signup',{modelid:'sys_signup'});
+	mcform_signup.run();
+}
+
+function uni_signup()
+{
+	mcform_signup.save(false,aftersignup,true);
+}
+function aftersignup(id)
+{
+	var urlpath=g_homeurl+"/Home/Index/gotoLogin/";
+	var username=mcform_signup.getFieldValue('name');
+	var email=mcform_signup.getFieldValue('email');
+	var password=mcform_signup.getFieldValue('psw');
+	$.post(urlpath,{username:username,password:password},function(msg){
+		uni_checkpass(msg,username);
+    }); 
+
+}
+function setting(e)
+{
+	mcdom.showIframe("__APP__/Home/Index/changePassword",{size:'auto',title:'更改密码'});
+}
+
+//反馈
+function addbug(e)
+{
+	var h="<div id='table_bug'></div>";
+	mcdom.showPopup(e,h,'',null,null,null,600,lang.feedback);
+	mcsstable=newMCSSTable('table_bug','oa_pm_bug',{pageposition:'rightdown',showfirst:true});
+	mcsstable.run(afterRunBug);
+}
+
+function afterRunBug(mcsstable)
+{
+	$(mcsstable.table).css({'table-layout':'fixed'});
+}
+//关于
+function about(e)
+{	
+	if (isShared)
+		$("#td_topmenu").show();
+	else
+	{
+		//window.open(g_homeurl+"/Project/index",'_blank');
+		var h=''
+		+'<img src="__PUBLIC__/themes/default/images/logo.png" style="padding-left:2px;width:80px;height:30" alt="UPP logo" />'
+		+'<span style="padding-top:10px;">项目计划表</span>'
+		+'<br /><br />©2013 铀尼工作室 京ICP备130350'
+		+'';
+		mcdom.showPopup(e,h,'',null,null,null,350,'关于');	
+	}
+}
+
+//日历
+function mycalendar(e)
+{	
+	window.open(g_homeurl+"/Task/mycalendar",'_blank');
+}
+
+function changeLanguage(e)
+{
+	setCookie('mcss_lang',e.value);
+	document.location.href=document.location.href;
+}
+
+//把html页面上汉子转化为对应的语言
+function setLanguage()
+{
+	var dom_id_arr="a_set,a_logout,a_login,a_signup,a_bug,newproject,a_myprojects,project_info,taskgantetu,mcss_sharingbutton,myprojects,savebutton,li_discussion,a_publicprojects,tabname_gantetu,tabname_project,tabname_discussion,li_all";
+	uitls_setLanguage(dom_id_arr);
+	$("#div_mainmenu").show();
+	if (!isShared)
+	$("#td_topmenu").show();	
+ }
+
+var mcform_user;
+function saveUserinfo()
+{
+	mcform_user.save();
+}
+
+//显示用户信息
+function showUserinfo(e)
+{	
+	var h="<div id='form_userinfo'></div>";
+	h+='<div class="smallloginsubmit">'
+	+'<input type="button" class="btn btn-green mcssingbutton" id="btn_saveuserinfo" value="'+lang.save+'" onclick="saveUserinfo();"  />'
+	+'</div>';
+	mcdom.showPopup(e,h,'',null,null,null,null,'账号信息');
+	mcform_user=new Autoform('form_userinfo',{modelid:'sys_userinfo',recordid:g_userid});
+	mcform_user.run();
+
+}
+
+//显示讨论内容
+function showDiscussionContent(value,record)
+{
+	var replytitle="";
+	if (value)
+		replytitle=clearHTML(value).substr(0,20);
+
+	var h="";
+	h+="<div style='height:150px;overflow:'>";
+	h+="<div style='height:120px;overflow:auto;'>"+value+"</div>";
+	h+="<input type='button' id='"+record.id+"' onclick='replyTopic(this,\""+record.project_id+"\",\""+replytitle+"\")' value='"+lang.comment+"' ／>";	
+	h+="</div>";
+	var records=record.mcsstable.params.replyRows;
+	for(var i=0;i<records.length;i++)
+	{
+		if (records[i].replyto_id==record.id)
+		{
+			h+="<br />》"+records[i].SYS_ADDUSER+" "+records[i].SYS_ADDTIME+ " 回复：<br />"+records[i].content;
+		}
+	}
+	return h;
+	
+}
+
+function showTimeUser(value,record)
+{
+	var h=record.SYS_ADDUSER+"<br />"+record.SYS_ADDTIME;
+	return h;
+}
+
+function discussion_afterLoadRows(mcsstable)
+{
+}
+
+var popupiframe;
+function replyTopic(e,project_id,replytitle)
+{
+		var recordid=e.id;
+		var s=""
+		+"<div id='"+recordid+"_autoform'></div>"
+		+"<div class='fuceng_buttom'>";
+		s+="<a id='"+recordid+"_save' href='javascript:void(0)' class='mcssingbutton btn btn-green'>"+lang.save+"</a>";
+		s+="</div>";
+ 
+		popupiframe=mcdom.showPopup(e,s,null,null,null,500,450,lang.comment);
+		var savebtn=document.getElementById(recordid+"_save");
+		var params={modelid:'oa_pm_taskcomment',defaultValue:"replyto_id:"+e.id+",project_id:"+project_id+",content:"+replytitle,saveButton:savebtn,refObject:e.parentNode.parentNode};
+		var Mcsstableform=new Autoform(recordid+"_autoform",params);   
+		Mcsstableform.run();
+		$("#"+recordid+"_save").click(function(){
+			Mcsstableform.save(false,refreshReplyList,false);
+		})
+
+}
+function refreshReplyList(recordid,result,autoform)
+{
+	$(popupiframe).remove();
+	$.getJSON("__APP__/Oa/Project/getProjectDiscussionReply",{project_id:project_id},function(replyRows){
+		mcsstable_discussion.params.replyRows=replyRows;	
+		mcsstable_discussion.reload();
+	})
+
+}
+
+//打开样例项目
+function openExampleProject()
+{
+	window.open(g_homeurl+"/Project/projectdetail/id/18197/sharekey/TjgJLyhA");
+}
+
+function loadbaidu()
+{
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F35a20a00be201fa9a257e423b6f54444' type='text/javascript'%3E%3C/script%3E"));
+}
+
+function showmyprojects()
+{
+	$("#myprojects").click();
+	if ($("#recentprojects").attr('checked')==false && $("#projects_createdbyme").attr('checked')==false && $("#projects_sharetome").attr('checked')==false)
+	{
+		$("#recentprojects").click();
+	}
+}
+
+var mcsstable_publicprojects;
+function showPublicProjects()
+{
+//ssss
+	if (!mcsstable_publicprojects)
+	{
+		mcsstable_publicprojects=newMCSSTable('table_publicprojects','oa_project_public',{showtitle:true});
+		mcsstable_publicprojects.run();
+	}
+	$(".xxinfo").hide();
+	$("#tab_publicprojects").show();
+	$(".nav").removeClass("nav");
+	//window.open(g_homeurl+"/Project/demo");
+}
+
+//浏览器检查
+function checkBrowser()
+{
+	var Sys = {};
+    var ua = navigator.userAgent.toLowerCase();
+    if (ua.indexOf('msie')>-1)    
+    {    	
+    	$("#browserinfo").html("<span style='color:red'>"+lang.browsererr+"</span>");
+    }
+}    
+
+var mcsstable_sharetome,mcsstable_recentprojects;
+//显示项目列表，基于选择的类别
+function showproject(e)
+{
+	if (e.id=='recentprojects'){
+		$("#table_myprojects").hide();
+		$("#table_sharetome").hide();
+		$("#table_recentprojects").show();
+		if (!mcsstable_recentprojects)
+		{
+			openRecentProjects();
+			//mcsstable_recentprojects=newMCSSTable('table_recentprojects','oa_project_recent');
+			//mcsstable_recentprojects.run();
+		}
+	}
+	else if (e.id=='projects_createdbyme'){
+		$("#table_recentprojects").hide();
+		$("#table_sharetome").hide();
+		$("#table_myprojects").show();
+		if (!mcsstable_my){
+			mcsstable_my=newMCSSTable('table_myprojects','oa_project_my',{showfirst:true,userAction:openFromMyProject});
+			mcsstable_my.run();
+		}		
+	}
+	else if (e.id=='projects_sharetome'){
+		$("#table_recentprojects").hide();
+		$("#table_myprojects").hide();
+		$("#table_sharetome").show();
+		if (!mcsstable_sharetome)
+		{
+			mcsstable_sharetome=newMCSSTable('table_sharetome','oa_project_sharetome');
+			mcsstable_sharetome.run();
+		}
+	}
+}
+
+function discussion_deleteRow(arr,mcsstable)
+{
+	if (mcsstable.mcssData.getFieldValue(arr,'SYS_ADDUSER')!=loginuser && mcform_project.getFieldValue('SYS_ADDUSER')!=loginuser)
+	{
+		mcdom.alert('只有项目所有者和评论创建者才能删除',lang.delete,'warning','fadeout');
+	}
+	else
+	if (confirm(lang.isdelete))
+	{
+		$(mcsstable.table).find("tr[recordid='"+arr+"']").remove();
+		$.post(g_homeurl+"/OA/Project/deleteDiscussion",{id:arr},function(data){
+		})
+	}
+}
+</script>

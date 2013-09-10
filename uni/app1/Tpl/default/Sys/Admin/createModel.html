@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style>
+</style>
+<title></title>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.js" ></script>
+</head>
+<body style="font-size:12px">
+请输入模型的ID：<input type='text' id='modelid' value='list_topic'>
+<input type='button' value='生成表单' onclick='createHTML()'>
+<br />表单:<br />
+<div id='formdata'>
+
+</div>
+<input type='button' value='查看HTML代码' onclick='showFormHTML()'>
+<br /><br />表单HTML:<br />
+<textarea rows='40' style='width:100%' id='formhtml' name='formhtml' ></textarea>
+
+</body>
+</html>
+<script>
+
+function createHTML()
+{
+
+var s='';
+var modelid=getE('modelid').value;//模型id
+var id;
+var saveUrl="__APP__/List/List/savenewRecord";
+var getRecordUrl="__APP__/List/List/getOneRecord";
+var getModelUrl="__APP__/List/List/getModelData";		//showHeaderList
+var form1=new Autoform('formdata',{"recordid":id,"modelid":modelid,"saveUrl":saveUrl,"getRecordUrl":getRecordUrl,"getModelUrl":getModelUrl});   
+$.getJSON(
+	getModelUrl,
+	{"modelid":modelid},
+	function(data) {
+		//alert(data);
+		form1.setValueFromParam({"modeldata":data,fields:data.fields});
+		form1.createFields(data.fields); 
+		if (id!=="")//说明不是新增记录，而是显示一条已存在的记录
+		{
+			form1.fetchData(initData);			
+		}
+		//form1.fetchData(initData);			
+});
+
+}
+
+function showFormHTML()
+{
+var html=$("#formdata").html();
+getE("formhtml").value=html;
+//alert(getE("formhtml").value);
+}
+function initData(data)
+{
+    form1.SetValue2Form(data);
+	
+}
+
+</script>

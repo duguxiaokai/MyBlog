@@ -1,0 +1,363 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>发送邮件</title>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/themes/yellow1/css/common.css' />
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/Landz/css/mail.css' />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/Landz/css/global.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/Landz/css/right.css"/>
+
+<script src="__PUBLIC__/jusaas/js/common.js"></script>
+<script src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script src="__PUBLIC__/themes/yellow1/js/theme.js"></script>
+<script src='__PUBLIC__/js/popup.js'></script>
+<script src="__PUBLIC__/js/jquery.js" ></script>
+</head>
+
+<body class='bodyfontsize'>
+<div class="position" id="positionCon"></div>
+<div class="gukeCon">
+    <div class="creright">
+        <div class="crerjyzh">
+			<div id="formdata"></div>
+			<div  style="text-align:center; margin:15px 0">
+			<a href="javascript:void(0)" class='button_list' onclick='submit()' style=" float:none;">
+			<img src="__PUBLIC__/Landz/images/button_ico_14.gif" border="0" style="line-height:25px;">发送邮件</a>
+			<!--<input type='button' class='setSubmit' value='发送邮件' onclick='submit()'>-->
+			<a onclick='save()' class="hrefcaogao" href="javascript:void(0)">点此将存到草稿箱</a>
+			<a href='__APP__/Landz/Mail/listMail/param:table/landz_mail_nosend/' class="hrefcaogao">草稿箱</a>
+			</div>
+			<table id="mcss_table"></table>
+        </div>
+ 	  </div>
+</div>
+<div id='background' class='background'></div><div id='progressBar' class='progressBar'>数据加载中，请稍等...</div>
+</body>
+</html>
+
+<script type="text/javascript">
+var form1;
+var g_imghome="http://erp.jtzcbj.com:8005/";
+var email;
+var emailpwd;
+var pass = "";
+var mydate;
+var mailList;
+var cidList;
+
+var btnselect;
+$(document).ready(function()
+{
+	var field_dealing=[{'receivers':myshow},{'content':myshow2}];
+	s=location.href;
+	mailList = decodeURI(getParamValue(s,"email"));
+	cidList = decodeURI(getParamValue(s,"cid"));
+	mydate = new Date();
+	var mcssTable=new MCSSTable({tableid:"mcss_table",modelid:"landz_mail_send",homeUrl:"__APP__",width:'100%',showtitle:true,
+	hidecheckbox:true,last_td_name:"操作",special_field_show:field_dealing},null,last_td);
+	mcssTable.run(dosome);
+});
+
+function myshow(fieldvalue,record)
+{
+	if(fieldvalue.length > 20)
+		return fieldvalue.substr(0,20)+"...";
+	else
+		return fieldvalue;
+}
+function myshow2(fieldvalue,record)
+{
+	if(fieldvalue.length > 10)
+		return fieldvalue.substr(0,10)+"...";
+	else
+		return fieldvalue;
+}
+
+function last_td(id)
+{
+	return "<input class='daKaiBut' onClick='find_url("+id+")' type='button' value='查看'>";
+}
+function find_url(id)
+{
+	ShowIframe("__APP__/List/List/viewRecord/model/landz_mail_send/tablename/landz_mail/id/"+id,"500","500","查看已发邮件");
+}
+
+function dosome()
+{
+	$.post("__APP__/Landz/Mail/iniMail","",function(mail){
+		email = mail;
+		$.post("__APP__/Landz/Mail/checkPass","",function(pwd){
+			emailpwd = pwd;
+			form1=new Autoform('formdata',{modelid:'landz_mail',homeUrl:"__APP__",recordid:'url:KEYFIELD'});
+			form1.run(afterRun);	
+		})
+	})
+}
+
+function afterRun()
+{
+	
+	$("#"+form1.getFieldID("sender")).val(email);
+
+	if(emailpwd != ""){
+		$("#tr_formdata_pass").hide();
+		$("#"+form1.getFieldID("pass")).val(emailpwd);
+	}else{
+		$("#tr_formdata_pass").show();
+	}
+ 
+
+ 	var h="<a onclick='selectReceiver()' style='cursor:pointer' class='setbutton'>收件人</a>";
+	$("#"+form1.getFieldID("receivers")).after(h);
+
+	h="<input type='button' onclick='selectTpl()' value='邮件模板' class='setbutton2'/>";
+
+	var node=$("#"+form1.getFieldID("content")+"_bar")[0];
+
+	$(node).html(h+"&nbsp;"+$(node).html());
+	
+	if(mailList)
+		$("#"+form1.getFieldID("receivers")).val(mailList);
+	if(cidList)
+		$("#"+form1.getFieldID("cid")).val(cidList);
+}
+
+function save()
+{
+	var time = mydate.format("yyyy-MM-dd hh:mm:ss");
+	$("#"+form1.getFieldID("sendtime")).val(time);
+	$("#"+form1.getFieldID("status")).val('0');
+		
+	form1.save(false);//是否保存刷新---false否/true是
+}
+
+function checkreceivers(save){
+	var receivers = form1.getFieldValue('receivers');
+	$.post("__APP__/td/Member/checkreceivers",{"receivers":receivers},function(data)
+	{	
+		if(data == 0){
+			alert('用户不存在,请检测后重新输入！');
+			$("#formdata_receivers").focus();
+			$("#formdata_receivers").val('');			
+		}
+		else
+		if (save)
+			form1.save(false);	
+	}); 	
+}
+
+function submit()
+{
+	var time = mydate.format("yyyy-MM-dd hh:mm:ss");
+	$("#"+form1.getFieldID("sendtime")).val(time); 
+	form1.save(false,sendemail,true);
+}
+function sendemail(id){
+	pass = form1.getFieldValue("pass");
+	$.post("__APP__/Landz/Mail/sendEmail",{"mailid":id,"pass":pass},function(data)
+	{
+		if(data == 0){
+			data = "发送邮件成功";
+			form1.setFieldValue('status','1');
+			form1.recordid = id;
+			form1.save(true,null,true);
+		}
+		alert(data);
+	}); 
+}
+
+ 
+
+//下面的方法应该写在父窗体中
+function insertListContent()
+{
+	btnselect = 'insertListContent';
+	ShowIframe("__APP__/Landz/Mail/fyTpl/modelid/landz_fyinfo_list", 1100,400,"选择列表房源");
+}
+function insertPhotoContent()
+{
+	btnselect = 'insertPhotoContent';
+	ShowIframe("__APP__/Landz/Mail/fyTpl/modelid/landz_fyinfo_list", 1100,400,"选择图片房源");
+}
+function selectReceiver()
+{
+	btnselect = 'selectReceiver';
+	ShowIframe("__APP__/Landz/Admin/customer/modelid/landz_mail_receiver", 900,430,"选择收件人");
+}
+function selectTpl()
+{
+	btnselect = 'selectTpl';
+	ShowIframe("__APP__/Landz/Admin/email/modelid/landz_mail_tpl/selectType/radio", 600,300,"选择邮件模板");
+}
+
+function mcss_SetSelected(arr)
+{
+	$("#"+form1.getFieldID("content")).focus();
+	if(btnselect == 'selectReceiver'){
+		var s='';
+		var k='';
+		for(i in arr)
+		{
+			if(s)
+				s+=",";
+			s+=arr[i]["HY_EMAIL"];
+			if(k)
+				k+=",";
+			k+=arr[i]["ID"];
+		}
+		$.post("__APP__/Landz/Mail/emailFilter",{"mail":s},function(data)
+		{
+			var cid = form1.getFieldValue("cid");
+			if(cid){
+				cid+=","+k;
+				$("#"+form1.getFieldID("cid")).val(cid);
+
+			}else
+				$("#"+form1.getFieldID("cid")).val(k);
+		
+			var val = form1.getFieldValue("receivers");
+			if(val){
+				if(data!=0)
+					val+= ","+data;
+				else
+					alert('邮箱格式不合法或已发送,已自动过滤！');
+				$("#formdata_receivers").val(val)
+			}else{
+				if(data!=0)
+					$("#formdata_receivers").val(data);
+				else
+					alert('邮箱格式不合法或已发送,已自动过滤！');
+			}	
+		});
+		
+	}else if(btnselect == 'selectTpl'){
+		
+		var content = arr[0]["content"];
+
+		var	fid = form1.getFieldID("content");//获取富文本框对象
+
+		GE(fid).innerHTML+=content;//将内容赋给富文本框
+
+	}else if(btnselect == 'insertListContent'){
+		var data = "";
+		for(i in arr){
+				data+="<tr><td>"+"<a href='http://www.landzestate.com/index.php?loupan="+arr[i]['CONTRACT_CODE']+ "' style='text-decoration:none; color:#2A71B3'>"+arr[i]["DISNAME"]+"</a>"+"</td><td>"+arr[i]["H_SHI"]+"室"+arr[i]["H_TING"]+"厅"+arr[i]["H_WEI"]+"卫"+arr[i]["H_TAI"]+"阳"+"</td><td>"+arr[i]["DIRECTION"]+"</td><td align='right'>"+arr[i]["USE_AREA"]+"</td><td align='right'>"+arr[i]["SALEPRICE"]+"</td></tr>";
+		}
+		var content = "<table border='1' bordercolor='#D8A24D' cellspacing='0' cellspacing='0' style='width:480px; color:#b57d27; border:#D8A24D 1px solid; margin:10px auto;'><tr><th colspan='5' style='background-color:#F8E9C1; font-size:14px; height:30px; text-align:center'><font face='微软雅黑'>丽兹行优质推荐房-买卖</font></th></tr><tr><th align='center'>项目名称</th><th align='center'>户型</th><th align='center'>朝向</th><th align='center'>面积(平米)</th><th align='center'>价格(万元)</th></tr>"+data+"</table>";
+		var	fid = form1.getFieldID("content");//获取富文本框对象
+		insertHTML(fid,content);
+	}else{
+		var fyinfo = "";
+		var photo = "";
+		var img ="";
+		var arrlen = arr.length;
+			for(i in arr){
+				if(arr[i]['HOUSE_PHOTO']){
+					photo = arr[i]['HOUSE_PHOTO'].split('$');
+					photo = g_imghome+photo[0];
+				}
+				else
+					photo = 'http://localhost/jusaas/Public/Landz/images/d2-0000.jpg';
+				if(arr[i]['HOUSE_IMAGE']){
+					img = arr[i]['HOUSE_IMAGE'].split('$');
+					img = g_imghome+img[0];
+				}else
+					img = 'http://localhost/jusaas/Public/Landz/images/d2-0000.jpg';
+				if(!arr[i]['TZ1'])
+					arr[i]['TZ1']='对不起,该小区暂无描述';
+				if(!arr[i]['MEMO'])
+					arr[i]['MEMO']='对不起,该房屋暂无描述'
+
+				fyinfo+="<div style='width:335px; height:355px; border:#F6E4B5 1px solid; padding:0 5px; overflow:hidden; float:left; margin:15px 30px 0 0;'>"+
+					"<a href='http://www.landzestate.com/index.php?loupan="+arr[i]['CONTRACT_CODE']+ "'"+"style='text-decoration:none; color:#2A71B3;display:block;text-align:center;'>"+arr[i]["DISNAME"]+"</a>"+
+					"<a href='http://www.landzestate.com/index.php?loupan="+arr[i]['CONTRACT_CODE']+ "'"+"style='text-decoration:none; color:#2A71B3;display:block;text-align:center;'>"+"<span style='width:150px; float:left; overflow:hidden; height:150px;'><img src='"+photo+"' width='150' height='150'/></span>"+"</a>"+
+					"<span style='width:175px; float:right; color:#333; overflow:hidden; height:170px; line-height:20px;'><b style='background:url(http://119.254.70.99/images/jiagebg.png) bottom no-repeat; height:25px; font:bold 14px/25px 宋体;padding-left:30px;display:block'>"+arr[i]['SALEPRICE']+"万元<font style='font-weight:normal; padding-top:5px'>"+arr[i]['USE_AREA']+"㎡</font></b>"+
+					"<b>销售价格:</b>"+arr[i]['SALEPRICE']+"万元<br />"+
+					"<b>面积:</b>"+arr[i]['USE_AREA']+"　<b>楼层:</b>"+arr[i]['FLOOR']+"层<br />"+
+					"<b>朝向:</b>"+arr[i]['DIRECTION']+"<br />"+
+					"<b>居室:</b>"+arr[i]['H_SHI']+"室"+arr[i]['H_TING']+"厅"+arr[i]['H_WEI']+"卫"+arr[i]['H_TAI']+"阳<br/>"+
+					"<b>商圈:</b>"+arr[i]['RE2']+"<br />"+
+					"<b>物业公司:</b>"+arr[i]['DUTY_USERNAME']+"</span>"+
+					"<span style='width:175px; float:left; color:#333; overflow:hidden; height:148px; line-height:20px;'>"+
+					"<b>小区简介:</b>"+arr[i]['TZ1']+"<br />"+
+					"<b>房屋描述:</b>"+arr[i]['MEMO']+	
+					"</span>"+"<a href='http://www.landzestate.com/index.php?loupan="+arr[i]['CONTRACT_CODE']+ "'"+"style='text-decoration:none; color:#2A71B3;display:block;text-align:center;'>"+
+					"<span style='width:150px; float:right; overflow:hidden; height:150px;'><img src='"+img+"' width='150' height='150' /></span></a>"+"</div>"
+			var head = "<div style='line-height:20px;color:#b57d27; overflow:hidden; padding-right:10px;'>"+
+				"<span style='display:block;'>尊敬的客户您好！</span>"+
+				"<span style='display:block; padding-left:2em'>很高兴的通知你，你提出购买房产事宜，我经过认真的筛选对比，最终选出6套房产向您推进，希望得到您的喜欢，如果暂时还不能满足您的需"+
+				"求，我将继续努力，一定为您找到适合房产资源，谢谢！</span>"+
+				"<span style='float:left; padding-left:2em'>"+
+				"丽兹行<br />"+mydate.toLocaleDateString()+
+				"</span>"+
+				"</div>";
+			var	content = "<div style='font-size:12px;border:#D0D0D0 1px solid; width:780px; margin:10px auto; padding:10px 0 10px 10px;overflow:hidden;'>"+head+"<div style='width:770px; height:33px; background-image:url(http://119.254.70.99/images/mailtitlebg.png); font:bold 16px/33px 微软雅黑; color:#280649; text-align:center; margin-top:5px;'>精品豪宅推荐</div>"+fyinfo+"</div>";
+		}
+		
+		var fid = form1.getFieldID("content");
+		insertHTML(fid,content);
+	}
+}
+
+//在光标处插入内容
+function insertHTML(divid,str){
+	var selection= window.getSelection ? window.getSelection() : document.selection;
+	var range= selection.createRange ? selection.createRange() : selection.getRangeAt(0);
+	if (!window.getSelection){
+	document.getElementById(divid).focus();
+	var selection= window.getSelection ? window.getSelection() : document.selection;
+	var range= selection.createRange ? selection.createRange() : selection.getRangeAt(0);
+	range.pasteHTML(str);
+	range.collapse(false);
+	range.select();
+	}else{
+	document.getElementById(divid).focus();
+	range.collapse(false);
+	var hasR = range.createContextualFragment(str);
+	var hasR_lastChild = hasR.lastChild;
+	while (hasR_lastChild && hasR_lastChild.nodeName.toLowerCase() == "br" && hasR_lastChild.previousSibling && hasR_lastChild.previousSibling.nodeName.toLowerCase() == "br") {
+	var e = hasR_lastChild;
+	hasR_lastChild = hasR_lastChild.previousSibling;
+	hasR.removeChild(e)
+	}                                
+	range.insertNode(hasR);
+	if (hasR_lastChild) {
+	range.setEndAfter(hasR_lastChild);
+	range.setStartAfter(hasR_lastChild)
+	}
+	selection.removeAllRanges();
+	selection.addRange(range)
+	}
+
+}
+//原型日期函数格式化方法
+Date.prototype.format = function(format) {
+	    /*
+	     * eg:format="YYYY-MM-dd hh:mm:ss";
+	     */
+	    var o = {
+	        "M+" :this.getMonth() + 1, // month
+	        "d+" :this.getDate(), // day
+	        "h+" :this.getHours(), // hour
+	        "m+" :this.getMinutes(), // minute
+	        "s+" :this.getSeconds(), // second
+	        "q+" :Math.floor((this.getMonth() + 3) / 3), // quarter
+	        "S" :this.getMilliseconds()
+	    // millisecond
+	    }
+	 	    if (/(y+)/.test(format)) {
+	        format = format.replace(RegExp.$1, (this.getFullYear() + "")
+	                .substr(4 - RegExp.$1.length));
+	    }
+	 
+	    for ( var k in o) {
+	        if (new RegExp("(" + k + ")").test(format)) {
+	            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k]
+	                    : ("00" + o[k]).substr(("" + o[k]).length));
+	        }
+	    }
+	    return format;
+	}
+</script>

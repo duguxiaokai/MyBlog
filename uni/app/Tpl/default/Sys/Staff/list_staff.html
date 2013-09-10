@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href='__PUBLIC__/css/common.css' rel='stylesheet' type='text/css'>
+<title>员工列表</title>
+</head>
+<script src="__PUBLIC__/Js/jquery.js"></script>
+<script src='__PUBLIC__/js/popup.js'></script>
+<script type="text/javascript">
+function mod_editFriblog(url){
+    g_pop=new Popup({ contentType:1, isReloadOnClose:false, width:340, height:360,isSupportDraging:true});
+	g_pop.setContent("title","编辑员工信息");
+    g_pop.setContent("contentUrl",url);
+    g_pop.build();
+	g_pop.show();
+	return false;
+}
+function mod_editFriblog1(url){
+    g_pop=new Popup({ contentType:1, isReloadOnClose:false, width:340, height:360,isSupportDraging:true});
+	g_pop.setContent("title","新建员工");
+    g_pop.setContent("contentUrl",url);
+    g_pop.build();
+	g_pop.show();
+	return false;
+}
+function  selectStaffAll()
+{
+	var staffId=document.getElementsByName("staffId");
+	for(var i=0;i<staffId.length; i++){
+		staffId[i].checked==true?staffId[i].checked=false:staffId[i].checked=true;
+	}
+}
+function moredel(){
+	var staffId=document.getElementsByName("staffId");
+	var ary=[];
+	for(var i=0;i<staffId.length;i++){
+		if(staffId[i].checked==true)
+		{
+		    ary.push(staffId[i].value);
+		}
+	}
+	var arr=ary.join(",");
+	if(arr==''){
+		alert("请选择一项！");
+		return;
+	}
+	else if(confirm("确定要删除吗？")){
+		var url=window.location.href="__APP__/SYS/Staff/moredelstaff?staffIds="+arr;
+	}	
+}
+</script>
+<body class='bodyfontsize'>
+<form action="" method="post">
+	<table class='liststyl' width="800px" cellspacing="0" cellpadding="0">
+  		<tr>
+    		<td class='tabletr' colspan="7" style="font-size:14px"><b>员工列表</b></td>
+  		</tr>
+	<tr class='tabletr'>
+    <td class="liststyltd"><input type="checkbox" id="staffIds" name="staffIds" onClick="return selectStaffAll()"/> <a href="#" onClick="return moredel()">删除</a>--<a href="#" onClick="mod_editFriblog1('__APP__/SYS/Staff/add_staff/src/list')">新增</a></td>
+    <td class="liststyltd">员工姓名</td>
+	<td class="liststyltd">性别</td>
+    <td class="liststyltd">电话</td>
+	<td class="liststyltd">用户名</td>
+	<td class="liststyltd">所在部门</td>
+	<td class="liststyltd">备注</td>
+    <!-- <td>操作</td>-->
+  </tr>
+  <volist name='data' id='vo'>
+  <tr>
+    <td class="liststyltd"><input type="checkbox" id="staffId" name="stffId" value="{$vo.id}"/>
+	<a href="#" onClick="window.open('__APP__/SYS/Staff/showonestaff/id/{$vo.id}')">打开</a>--
+	<a href="#" onClick="mod_editFriblog('__APP__/SYS/Staff/editonestaff/id/{$vo.id}')">编辑</a>
+    <td class="liststyltd">{$vo.name}</td>
+    <td class="liststyltd">{$vo.gender}</td>
+    <td class="liststyltd">{$vo.mobile}</td>
+	<td class="liststyltd">{$vo.username}</td>
+	<td class="liststyltd">{$vo.dept}</td>
+	<td class="liststyltd">{$vo.notes}</td>
+  </tr>
+  </volist>
+</table>
+<div style="margin:10px 0 0 20px;">{$page}</div>
+</form>
+</body>
+</html>

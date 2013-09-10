@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<link rel='stylesheet' type='text/css' href='__PUBLIC__/jusaas/mctree/MCTree_left.css'>
+	<link rel='stylesheet' type='text/css' href='__PUBLIC__/themes/default/css/otherweb.css'>
+	<script src="__PUBLIC__/themes/default/js/jquery-1.4.4.min.js" type="text/javascript"></script>
+	<script src="__PUBLIC__/jusaas/js/common.js"></script>
+	<script src="__PUBLIC__/jusaas/js/dom.js"></script>
+	<script src="__PUBLIC__/jusaas/mctree/MCTree.js"></script>
+	<script src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+	<script src="__PUBLIC__/jusaas/js/utils.js"></script>
+<title>信息中心</title>
+</head>
+<body class="padding">
+<div id="mcss_pagebar"></div>
+<table width="100%"  class="tableHeight" border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td style='vertical-align:top; width:170px' id="resizeLeft">
+<div style="padding:3px;">
+<input type='text' id='searchtext' value='' onKeyup="gotoSearch();" class="select_txt_input" style="width:130px;"/>
+<input type='button' value='搜索' class='selectbutton' onclick="search()">
+<div id="mctree_div" class='ztree ztree_left'></div> 
+</div>
+</td>
+<td width="7px" style="border-left:#BBBBBB 1px solid; background-color:#F7F7F7;">
+	<a id="NavigationResize" href="javascript:void(0)" class="NavigationResize">
+</a>
+</td>
+<td style='vertical-align:top;' class='resizeRight'>
+<div class="ztree_Right">
+<table id="filelist" width="100%"></table> 
+</div> 
+</td>
+</tr>
+</table>
+</body>
+</html>
+<script>
+var form1,mcssTable;
+var wl;
+var mcssTable;
+var currentNodeId;
+var count=1;
+var field_dealing=[{'name':myshow,'comment':myshow_comment}];
+$(document).ready(function(){
+	initTree();
+	mcssTable=new MCSSTable({tableid:"filelist",modelid:"oa_info",showfirst:true,first_td_name:"",width:'100%',special_field_show:field_dealing,showRecordActionAtLast:true,deleteRow:deleterow,userAction:taskAction});
+	mcssTable.run(afterrun);
+	//展开收起
+	$('#NavigationResize').toggle(function(){
+		$('#resizeLeft').hide();
+		$(this).addClass('NavigationResize_toggle');
+	},function(){
+		$('#resizeLeft').show();
+		$(this).removeClass('NavigationResize_toggle');
+	});
+	//自动加高宽度
+	var height = document.documentElement.clientHeight-10;
+	$('.tableHeight').height(height);
+	
+})
+function afterrun(mcsstable){
+	$("#filelist_action_search2").after("<a class='labellink text_search2_btn' href='javascript:void(0)' onclick='tags_search(this,\"信息\",\""+mcsstable.params.tableid+"\")'>标签</a>");
+	mcssTable.showAction('add,del',false);
+	$("#filelist_action_add").show();
+}
+
+
+
+function taskAction(html,recordid,record,mcsstable)
+{
+	return html+"<a href='javascript:void(0)' class='smallbut mcsstable_record_tag' onclick='tag_createTag(this,"+recordid+",\"信息\")' title='添加标签'>标签</a>";
+}
+
+function myshow(fieldvalue,record)
+{
+	return "<a href='javascript:showdetail("+record.id+")'>"+fieldvalue+"</a>";
+}
+function myshow_comment(fieldvalue,record)
+{
+	if (fieldvalue && fieldvalue.length>15)
+		return fieldvalue.substr(0,14);
+	else
+		return fieldvalue;
+}
+function showdetail(id)
+{
+	var url="__APP__/Oa/Index/viewRecord/model/oa_info_view/id/"+id;
+	var params = {width:"960",height:"500",title:"信息分享",lock:'true'};
+	mcdom.showIframe(url,params);
+}
+function initTree()
+{
+ 	var url="__APP__/Mcss/Model/getTree";
+	var filter = "type=<yh>info<yh>"+"and SYS_ORGID="+getCookie("mcss_orgid");
+ 	$.getJSON(url,{table:"sys_tree",id:"id",pid:"parentid",name:"name",filter:filter},function(data){
+  		var orgdata=getTreeJSON(data,'','id','parentid');
+		wl=new MCTree("mctree_div",orgdata,{srcData:data,field_id:"id",field_pid:"parentid",click:clickNode,loadstyle:'loadallshowall',focusNode:currentNodeId,showRecordActionAtLast:true});
+		wl.run();
+	})
+}
+ 
+function clickNode(obj)
+{
+	$("span").removeClass("menunav");
+	$(obj).addClass("menunav");
+	var nodeid=$(obj.parentNode).attr('objectid');
+	var filter = "dir="+nodeid;
+	var array = obj.id.split('_');
+	if(array[0]==10)
+		filter = '1=1';
+    if (mcssTable) 
+	 {
+		mcssTable.filter=filter;
+		mcssTable.params.defaultValue="dir:"+nodeid;
+		mcssTable.currentpage=1;
+		mcsstable_loaddatarows('filelist');
+	 }
+	 else
+	 { 
+		mcssTable=new MCSSTable({tableid:"filelist",modelid:"oa_info",showfirst:true,first_td_name:"-",width:'100%',filter:filter,defaultValue:"dir:"+nodeid,special_field_show:field_dealing,showRecordActionAtLast:true,deleteRow:deleterow,toolbar:"add"});
+		mcssTable.run(); 	
+	 }
+
+ 
+}
+function deleterow(deleteIds,mctable)
+{
+	var mcdata=new MCSSData(mctable.data,mctable.modeldata);
+	if (mcdata.getFieldValue(deleteIds,"SYS_ADDUSER")!=getCookie("mcss_loginuser") && getCookie("mcss_loginuser")!='admin')
+	{
+		//alert("不能删除别人的帖子！");
+		MCDom.prototype.alert("不能删除别人的帖子！","提示","warning","fadeout");
+		return false;
+	}
+	return true;
+}
+function search()
+{
+	var s=$("#searchtext").val();
+	wl.searchNode(s);
+}
+
+function gotoSearch()
+{
+	if (event.keyCode==13){
+		search();
+	}
+}
+</script>

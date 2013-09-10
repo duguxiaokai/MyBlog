@@ -1,0 +1,26 @@
+<?php return array(
+'id'=>"oa_task_day_summary",
+'title'=>"日报总结",
+'base'=>"oa_task",
+'tablename'=>"oa_task",
+'filter'=>"SYS_ORGID=orgid()",
+'actions'=>"add,del,edit,search,page",
+'keyfield'=>"id",
+'wayofcopyfields'=>"onlycopyprop",
+'cols'=>"1",
+'fields'=>array(
+ array('id'=>"id",'name'=>"ID",'isvisible'=>"false",'visibleWhenAdd'=>"false",'width'=>"300px",),
+ array('id'=>"cat",'name'=>"工作类别",'length'=>"50",'defaultdata'=>"日报",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"executerid",'name'=>"执行人",'defaultdata'=>"Me()",'isvisible'=>"false",'visibleWhenAdd'=>"false",'width'=>"300px",),
+ array('id'=>"name",'name'=>"总结",'type'=>"textarea",'width'=>"720px",'height'=>"100px",),
+ array('id'=>"tag",'name'=>"标签",'type'=>"dropdown",'data'=>"1:计划概述,2:工作条目,3:总结",'defaultdata'=>"3",'isvisible'=>"false",'visibleWhenAdd'=>"false",'width'=>"300px",),
+ array('id'=>"begindate",'name'=>"开始日期",'fieldtype'=>"date",'type'=>"date",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"enddate",'name'=>"结束日期",'fieldtype'=>"date",'type'=>"date",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"SYS_ADDUSER",'name'=>"创建者",'isvisible'=>"false",'visibleWhenAdd'=>"false",'width'=>"300px",),
+ array('id'=>"SYS_ADDTIME",'name'=>"创建时间",'fieldtype'=>"datetime",'type'=>"SYS_ADDTIME",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",'forsearch'=>"true",'width'=>"300px",),
+ array('id'=>"SYS_EDITUSER",'name'=>"更新人",'fieldtype'=>"string",'type'=>"SYS_EDITUSER",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",'width'=>"300px",),
+ array('id'=>"SYS_EDITTIME",'name'=>"更新时间",'fieldtype'=>"datetime",'type'=>"SYS_EDITTIME",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",'width'=>"300px",),
+ array('id'=>"SYS_ORGID",'name'=>"组织id",'defaultdata'=>"orgid()",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+),
+
+) ?>

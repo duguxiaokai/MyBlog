@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> <!--dtd协议-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="__PUBLIC__/themes/default/css/otherweb.css" rel="stylesheet" type="text/css">
+<script src="__PUBLIC__/themes/default/js/jquery-1.4.4.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script src='__PUBLIC__/js/popup.js'></script>
+
+<script type="text/javascript">
+var btnSelect=0;var btnSel;
+$(document).ready(function(){
+	//基本信息
+	form1=new Autoform('formdata1',{"modelid":"sys_staff_mcss",recordid:'url:KEYFIELD'});   
+	form1.run(setForm1);
+	//账号信息
+	form2=new Autoform('formdata2',{"modelid":"sys_user_mcss"});   
+	form2.run(setForm2);
+	//高级信息
+	form3=new Autoform('formdata3',{"modelid":"sys_staff_base",recordid:'url:KEYFIELD'});   
+	form3.run();
+	/*$(".personCenter h3 span").click(function(){
+		$(this).addClass('clicknav').siblings().removeClass('clicknav');
+		var i=$(".personCenter h3 span").index($(this));
+		btnSelect=i;
+		$(".formdataConBox .formdataCon").eq(i).css('width','auto').slideDown().parents().siblings().find('.formdataCon').slideUp();
+	});*/
+	$(".WorksMenu ul li").click(function(){
+		$(this).addClass("nav").siblings().removeClass("nav");
+		var index=$(".WorksMenu ul li").index($(this));
+		btnSelect=index;
+		$(".WorksContent .formdataCon").hide();
+		$(".WorksContent .formdataCon").eq(index).show();
+	});
+	
+	
+});
+function setForm1()
+{
+	/*var h = '<input type="button" value="选择" onclick="selDept()">';
+	$("#"+form1.getFieldID('dept')).after(h);
+	
+	var h = '<input type="button" value="选择" onclick="selPost()">';
+	$("#"+form1.getFieldID('post')).after(h);
+	*/
+	var deptid=form1.getFieldValue('deptid');
+	var url='__APP__/Oa/Person/getDeptById';
+	$.post(url,{deptid:deptid},function(data){
+		form1.setFieldValue('dept',data);
+	})
+}
+function setForm2()
+{
+	
+	form2.setFieldValue('name',getCookie("mcss_loginuser"));
+	var url = '__APP__/Oa/Person/getUserIdByName';
+	$.post(url,{name:getCookie("mcss_loginuser")},function(data){
+		form2.recordid = data;
+		var url1='__APP__/Oa/Person/getUserLogin_option';
+		$.post(url1,{id:data},function(da){
+			if(da)
+			{
+				$("#formdata2_login_option option[value='"+da+"']").attr("selected",true);
+				$(".jqTransformSelectWrapper").find("span").html($("#formdata2_login_option option[value='"+da+"']").html());
+			}
+		});
+	});
+}
+function saveRecord(){
+	if(btnSelect=="0")
+	{
+		form1.save(false,'',true);
+		alert("保存成功!");
+	}
+	else if(btnSelect=="1")
+	{
+		form3.save(false,forImg,true);
+		alert("保存成功!");
+	}
+	else
+	{
+		var id=form2.recordid;
+		var name=form2.getFieldValue("name");
+		var pwd=form2.getFieldValue("psw");
+		var repwd=form2.getFieldValue("repeatpsw");
+		var login_option=form2.getFieldValue("login_option");
+		if(pwd==repwd){
+			if(login_option)
+			{
+				if($("#formdata2_psw").val())
+				{
+					var url1='__APP__/Oa/Person/updatePwd';
+					$.post(url1,{id:id,"pwd":pwd,"name":name},function(da){
+						if(da==1)
+							alert("保存成功");
+						else if(da==2)
+						{
+							alert("密码已存在，不可作为登录密码，请重新输入");
+							$("#formdata2_psw").val('');
+							$("#formdata2_repeatpsw").val('');
+							$("#formdata2_psw").focus();
+						}	
+						else
+							alert("保存失败");
+					});
+				}else{
+					alert("请输入密码");
+					$("#formdata2_psw").focus();
+				}
+			}else{				
+				form2.save(false,'',true);
+				alert("保存成功!");
+			}
+		}else{
+			alert("密码不一至");
+			$("#formdata2_repeatpsw").focus();
+		}
+	}
+}
+function forImg(){
+	
+}
+function selDept()
+{
+	btnsel = "selDept";
+	var url = "__APP__/Mcss/Model/select/modelid/sys_dept_mcss/selectType/radio";
+	ShowIframe(url,"750","400","部门列表");
+}
+function selPost()
+{
+	btnsel = "selPost";
+	var url = "__APP__/Mcss/Model/select/modelid/sys_position_mcss/selectType/radio";
+	ShowIframe(url,"750","400","岗位列表");
+}
+//下列方法写在父窗体中
+function mcss_SetSelected(arr)
+{
+	if(btnsel=='selDept'){
+		form1.setFieldValue('deptid',arr[0]['id']);
+		form1.setFieldValue('dept',arr[0]['name']);
+	}else{
+		form1.setFieldValue('post',arr[0]['name']);
+	}
+	
+}
+
+function back()
+{
+	window.history.go(-1);
+}
+
+</script>
+</head>
+
+<body class="padding">
+ <!-- Start-->
+ <div class="shangji">
+ <div class="worksTab">
+	<div class="WorksMenu">
+	<ul>
+	<li class="nav">基本信息</li>
+	<li>高级信息</li>
+	<li>账号信息</li>
+	</ul>
+	</div>
+	<!--基本信息 start-->
+	<div class="WorksContent">
+	<div id='formdata1' class="formdataCon"></div>
+	<div id='formdata3' class="formdataCon" style="display:none"></div>
+	<div id='formdata2' class="formdataCon" style="display:none"></div>
+	</div>
+ </div> 
+ </div>
+<div style="text-align:center">
+	<a href="javascript:void(0)" class="big_btn big_btn-green" onclick='saveRecord()'>保存</a>
+	<a href="javascript:void(0)" onClick="window.location.reload()" id="refresh" class="big_btn big_btn-blue">刷新</a>
+</div>
+<div id='background' class='background'></div><div id='progressBar' class='progressBar'>数据加载中，请稍等...</div>
+</body>
+</html>

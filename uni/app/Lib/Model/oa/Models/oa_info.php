@@ -1,0 +1,27 @@
+<?php return array(
+'id'=>"oa_info",
+'title'=>"信息中心",
+'tablename'=>"oa_info",
+'addurl'=>"default",
+'filter'=>"SYS_ORGID=orgid()",
+'orderby'=>"SYS_EDITTIME desc",
+'open_window_style'=>"popup:middle",
+'actions'=>"add,del,edit,search,search2,page",
+'fields'=>array(
+ array('id'=>"id",'name'=>"ID",'fieldtype'=>"int",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"name",'name'=>"标题",'fieldtype'=>"string",'forsearch'=>"true",),
+ array('id'=>"detail",'name'=>"正文",'length'=>"5000",'type'=>"richeditor",'isvisible'=>"false",'forsearch'=>"true",'width'=>"450px",'height'=>"200px",),
+ array('id'=>"attach",'name'=>"附件",'length'=>"255",'type'=>"file",'isvisible'=>"false",'forsearch'=>"true",),
+ array('id'=>"sharetype",'name'=>"权限（未实现）",'length'=>"5",'type'=>"radio",'data'=>"all:所有人,some:部分人,me:自己",'defaultdata'=>"all",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"shareto",'name'=>"共享",'length'=>"500",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"shareto_id",'name'=>"共享者ID列表",'length'=>"500",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"comment",'name'=>"最新评论",'length'=>"50",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"dir",'name'=>"目录分类",'fieldtype'=>"int",'defaultdata'=>"11",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"SYS_ADDUSER",'name'=>"创建者",'fieldtype'=>"string",'length'=>"50",'type'=>"SYS_ADDUSER",'defaultdata'=>"MyStaffName()",'isvisible'=>"true",'readonly'=>"true",),
+ array('id'=>"SYS_ADDTIME",'name'=>"创建时间",'type'=>"SYS_ADDTIME",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"SYS_EDITTIME",'name'=>"更新时间",'fieldtype'=>"datetime",'type'=>"SYS_EDITTIME",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"SYS_EDITUSER",'name'=>"更新者",'fieldtype'=>"string",'length'=>"50",'type'=>"SYS_EDITUSER",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"SYS_ORGID",'name'=>"组织ID",'fieldtype'=>"int",'type'=>"SYS_ORGID",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+),
+
+) ?>

@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> <!--dtd协议-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> 员工日报统计</title>
+<link href="__PUBLIC__/themes/default/css/common.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/themes/default/css/otherweb.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jusaas/calendar/McssCalendar.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="__PUBLIC__/js/jquery.js" ></script>
+<script type="text/javascript" src='__PUBLIC__/js/popup.js'></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/calendar/McssCalendar.js"></script>
+</head>
+<body>
+<div class="rili">
+    <div id='mycalendar'></div>
+</div>
+<div id='main'>
+	<table id="task_count"  border='1'></table>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	mccalendar=new McssCalendar({id:'mycalendar',onclick:onclick,afterShowCalendarBody:loadlist,calendartype:'selectdate'});
+	mccalendar.run();
+})
+
+function loadlist(mccalendar,onlyrefreshData)
+{
+	var date=mccalendar.currentdate;
+	var day=mccalendar.getGoodDate(date);
+	var beginweek=mccalendar.getWeekStartDate();
+	var endweek=mccalendar.getWeekEndDate();
+	var beginmonth=mccalendar.getMonthStartDate();
+	var endmonth=mccalendar.getMonthEndDate();
+	
+	var filter="(begindate<='"+day+"' and enddate>='"+day+"') or (begindate>='"+day+"' and enddate<='"+day+"') or (begindate<='"+day+"' and enddate>='"+day+"') or (begindate<='"+day+"' and enddate>='"+day+"')";
+
+	mcssTable=new MCSSTable({tableid:'task_count',modelid:'oa_task_tongji',filter:filter,showfirst:true});
+	mcssTable.run();
+}
+
+function onclick(title,cal)
+{	
+	if(cal.currentdate-cal.today!=0)
+		$("td[title='"+cal.getGoodDate(cal.currentdate)+"']").removeClass('ontoday_day');
+	cal.currentdate=cal.newDate(title);
+	$("#"+cal.id+"_currentdate").val(title);
+	if(cal.currentdate-cal.today!=0)
+		$("td[title='"+title+"']").addClass('ontoday_day');
+	loadlist(cal,true);
+}
+</script>

@@ -1,0 +1,81 @@
+<?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>重置密码</title>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/themes/<?php echo ($mcss_theme); ?>/css/common.css' />
+<link href="__PUBLIC__/Landz/css/right.css" rel="stylesheet" type="text/css" />
+<script src="__PUBLIC__/jusaas/js/common.js"></script>
+<script src="__PUBLIC__/td/js/common.js"></script>
+<script src="__PUBLIC__/js/DatePicker/WdatePicker.js"></script>
+<script src="__PUBLIC__/js/jquery.js" ></script>
+<script language="JavaScript">
+/**
+* 检查表单输入的数据
+*/
+function register()
+{
+	var password=$("#psw").val();
+	var repassword=$("#psw2").val();
+	if(repassword !='' || password !='')
+	{
+		if(repassword != password)
+		{
+			alert('密码不一致');
+		}else
+		{
+			GE("adminform").submit();
+		}
+	}else
+	{
+		alert('密码不能为空');
+	}
+}
+
+</script>
+<style type="text/css">
+body,p,div,ul,h3{ font-size:12px; margin:0; padding:0; }
+	p{ margin-bottom:10px; line-height:20px;}
+	.message{ width:297px; height:170px; margin:20px auto; overflow:hidden;}
+	.message h3{ height:21px; color:#FFF;font:bold 12px/21px "宋体";padding-left:5px; background:url(__PUBLIC__/Images/tishibg.png) no-repeat}
+	.messageBox{ width:297px; height:149px; background:url(__PUBLIC__/Images/tishibg2.png) no-repeat; padding:10px;}
+	.space{ font:bold 15px/30px "黑体", "宋体", "微软雅黑";}
+	.messageBox img{ vertical-align:middle}
+.findpwdinput{background-color: #FFFFFF;
+    border: 1px solid #D6BC8B;
+    height: 16px;
+    width: 130px;}
+.findSub{ width:50px; height:25px; background:#C60; color:#FFF; border:none; font-weight:bold}
+</style>
+</head>
+<body>
+<div class="message">
+ <h3>重置密码</h3>
+ <div class="messageBox">
+	<form action="__APP__/home/Index/setpassword" method="post" id='adminform'>
+	<table cellpadding="0" cellspacing="0" border="0">
+		<tr>
+			<td height="30px" align="right">设置新密码：</td>
+		    <td><input style="width:150px;" type="password" name='psw' id='psw' class="findpwdinput" /></td>
+			<td><input style="width:150px" type="hidden" name='time' id='time' value="<?php echo ($time); ?>" /></td>
+			<td><input style="width:150px" type="hidden" name='name' id='name' value="<?php echo ($name); ?>" /></td>
+			<td><input style="width:150px" type="hidden" name='object' id='object' value="<?php echo ($object); ?>" /></td>
+			<td><input style="width:150px" type="hidden" name='status' id='status' value="<?php echo ($status); ?>" /></td>
+			<td><input style="width:150px" type="hidden" name='name1' id='name1' value="<?php echo ($name1); ?>" /></td>
+			<td><input style="width:150px" type="hidden" name='link' id='link' value="<?php echo ($link); ?>" /></td>
+		</tr>
+		<tr>
+			<td height="30px" align="right">重复密码：</td><td><input style="width:150px" type="password" name='psw2' id='psw2' class="findpwdinput"/><td/>
+		</tr>
+		<tr>
+		<td> </td>
+		 <td>
+			<input type='button'  value='保存' class="findSub" onclick='register()' style="margin-top:10px;">&nbsp;&nbsp;&nbsp;&nbsp;<input type="reset" value='重置' class="findSub"  style="margin-top:10px;"/>
+		</td>
+		</tr>
+	</table>
+	</form>
+</div>
+</div>
+</body>
+</html>

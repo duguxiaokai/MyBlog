@@ -1,0 +1,13 @@
+﻿@charset "utf-8";
+/* CSS Document */
+body.loginbg{ background:url(../images/loginbodybg.jpg) top left repeat;}
+
+.forgetloginMid{width:921px; height:376px; margin:0 auto; margin-top:30px; overflow:hidden; padding:15px; background:url(../images/forgetbg.jpg) no-repeat;}
+.forgetloginMid .logintitle{font:bold 20px/30px "微软雅黑"; height:30px; color:#436cb4; text-shadow:1px 1px 1px #FFF}
+.forgetloginMid h3{font:bold 12px/20px "微软雅黑"; color:#a2a2a2}
+.forgetLoginbox{ width:500px; margin:20px auto; padding-top:70px;}
+.forgetLoginbox .inputStyles{ width:254px; height:45px; background:url(../images/loginInputbg.jpg) no-repeat; line-height:45px\9; padding-left:10px;border:none}
+.forgetLoginbox p{ margin-bottom:20px;}.forgetLoginbox span{ font-family:"微软雅黑"; color:#939393}
+.forgetLoginbox p input.tijiaobutton,.forgetLoginbox p input.quxiaobutton{ height:45px; width:106px; border:none; background:url(../images/button.jpg) top repeat-x; margin-right:5px;}
+.forgetLoginbox p input.tijiaobutton:hover{ background-position:0 -44px}
+.forgetLoginbox p input.quxiaobutton{ background-position:0 -89px}.forgetLoginbox p input.quxiaobutton:hover{background-position:0 -134px}

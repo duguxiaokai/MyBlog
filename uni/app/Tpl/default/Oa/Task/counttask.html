@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> <!--dtd协议-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+<link href="__PUBLIC__/themes/default/css/common.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/themes/default/css/otherweb.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="__PUBLIC__/js/jquery.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+</head>
+
+<body>
+<div id='main'>
+<table id="mcss_table"  border='1'></table>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+var mcssTable;
+$(document).ready(function() {
+	var field_dealing=[{'day_finishper':myshow},{'week_finishper':myshow2},{'day_worknumber':myshow3},{'week_worknumber':myshow4}];
+	mcssTable=new MCSSTable({tableid:"mcss_table",showRecordActionAtLast:true,modelid:'oa_task_staff_stat',showfirst:false,width:'100%',showtitle:false,special_field_show:field_dealing});
+	mcssTable.run();
+});
+
+function myshow(fieldvalue,record)
+{
+	var finishper = 0;
+	if(!fieldvalue)
+		fieldvalue=0;
+	if(!record.day_worknumber)
+		record.day_worknumber=0;
+	if(!(fieldvalue==0 || record.day_worknumber==0))
+		finishper = Math.floor((parseInt(fieldvalue)/parseInt(record.day_worknumber))*100);
+	if(finishper >= 80)
+		return "<font color='green'>"+finishper+"%</font>";
+	else if(finishper >= 50 && finishper <= 80)
+		return "<font color='#FF9900'>"+finishper+"%</font>";
+	else
+		return "<font color='red'>"+finishper+"%</font>";
+}
+
+function myshow2(fieldvalue,record)
+{
+	var finishper = 0;
+	if(!fieldvalue)
+		fieldvalue=0;
+	if(!record.week_worknumber)
+		record.week_worknumber=0;
+	if(!(fieldvalue==0 || record.week_worknumber==0))
+		finishper = Math.floor((parseInt(fieldvalue)/parseInt(record.week_worknumber))*100);
+	if(finishper >= 80)
+		return "<font color='green'>"+finishper+"%</font>";
+	else if(finishper >= 50 && finishper <= 80)
+		return "<font color='#FF9900'>"+finishper+"%</font>";
+	else
+		return "<font color='red'>"+finishper+"%</font>";
+}
+
+function myshow3(fieldvalue,record){
+	if(!fieldvalue)
+		fieldvalue=0;
+	return fieldvalue;
+}
+
+function myshow4(fieldvalue,record){
+	if(!fieldvalue)
+		fieldvalue=0;
+	return fieldvalue;
+}
+</script>

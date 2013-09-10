@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href='__PUBLIC__/css/common.css' rel='stylesheet' type='text/css'>
+<title>新建员工表</title>
+</head>
+<script src='__PUBLIC__/js/popup.js'></script>
+<script src="__PUBLIC__/js/jquery.js"></script>
+<script type="text/javascript" language="javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript">
+function mod_editFriblog(url){
+    g_pop=new Popup({ contentType:1, isReloadOnClose:false, width:270, height:260,isSupportDraging:true});
+	g_pop.setContent("title","用户名列表");
+    g_pop.setContent("contentUrl",url);
+    g_pop.build();
+	g_pop.show();
+	return false;
+}
+function mod_editFriblog1(url){
+    g_pop=new Popup({ contentType:1, isReloadOnClose:false, width:270, height:260,isSupportDraging:true});
+	g_pop.setContent("title","部门列表");
+    g_pop.setContent("contentUrl",url);
+    g_pop.build();
+	g_pop.show();
+	return false;
+}
+function checkname() {
+//alert($('#name').val());
+    if($('#name').val()=='') {
+        $('#span1').html('必选字段');
+        return false;
+    }else{
+        return true;
+    }
+}
+
+function check() {
+    if(checkname() == false) return false;
+}
+$(document).ready(function() {
+    	settitle("新建员工");
+	});
+function settitle(title){
+    var s=title+"　";
+    document.getElementById("title").innerHTML=s;
+}
+	
+</script>
+<body class='bodyfontsize'>
+<form method="post" action="__APP__/SYS/Staff/insertstaff/">
+<table class='table' width="300" height="200" cellspacing="0" cellpadding="10">
+  <if condition="($src neq 'list')">
+  <tr>
+    <td class='tabletr' colspan="2" style="font-size:14px"><b><span id="title"></span></b></td>
+  </tr>
+  </if>
+  <tr>
+    <td>
+		<table width="300" cellspacing="0" cellpadding="5"  align="center">
+		  <tr>
+			<td align="right"><span style="color:red;">* </span><strong>员工姓名：</strong></td>
+			<td><input class='tdinput' type="text" name='name' id='name' onBlur="checkname()"><span id='span1'></span></td>
+		  </tr>
+		 <tr>
+			<td align="right"><strong>员工性别：</strong></td>
+			<td><input type="radio" name='gender' id="gender" value='男' checked="checked">男
+			<input type="radio" name='gender' id="gender" value='女'>女</td>
+		  </tr>
+		  <tr>
+			<td align="right"><strong>员工电话：</strong></td>
+			<td><input type="text" name='mobile' id="mobile"></td>
+		  </tr>
+		  <tr>
+			<td align="right"><strong>员工用户名：</strong></td>
+			<td><input type="text" name='username' id="username" readonly=""  ><a href="javascript:void(0)" onClick="mod_editFriblog('__APP__/SYS/Staff/list_user/')" style=" cursor:pointer" title="选择">…</a></td>
+		  </tr>
+		   <tr>
+			<td align="right"><strong>所在部门：</strong></td>
+			<td><input type="text" name='dept' id='dept' readonly=""><a href="javascript:void(0)" onClick="mod_editFriblog1('__APP__/SYS/Staff/list_dept/')" style=" cursor:pointer" title="选择" >…</a></td>
+		  </tr>
+		  <tr>
+			<td align="right" valign="top"><strong>备注：</strong></td>
+			<td><textarea name="notes" id="notes"></textarea></td>
+		  </tr>
+		</table>
+	</td>
+  </tr>
+  <tr>
+    <td class="tabletr" colspan="2" align="center">
+		<input type="submit" class="formbutton" onClick="return check();" onMouseOut="this.className='formbutton';" onMouseOver="this.className='formbutton_hover';" value="确定">&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type="reset" class="formbutton" onMouseOut="this.className='formbutton';" onMouseOver="this.className='formbutton_hover';" value="重置">
+	</td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

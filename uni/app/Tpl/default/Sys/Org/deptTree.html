@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<link rel='stylesheet' type='text/css' href='__PUBLIC__/jusaas/mctree/MCTree_left.css'>
+	<link href='__PUBLIC__/themes/blue/css/common.css' rel='stylesheet' type='text/css'>
+
+	<script src="__PUBLIC__/js/jquery.js" ></script>
+	<script src="__PUBLIC__/jusaas/js/common.js"></script>
+	<script src="__PUBLIC__/jusaas/mctree/MCTree.js"></script>
+	<script src="__PUBLIC__/jusaas/js/dom.js"></script>
+	
+<style>
+
+</style>
+<title>部门</title>
+
+</head>
+<input type='text' id='searchtext' value='' onKeyup="gotoSearch();" />
+<input type='button' value='搜索' onclick="search()">
+<br />选择节点后双击或单击[确定]按钮<input type='button' onclick='confirm();' value='确定'>
+
+<table><tr>
+<td style='vertical-align:top;'> 
+<div id="myorg" class='ztree'></div> 
+<div id="status"></div> 
+</td>
+<td style="vertical-align:top;">
+
+</td></tr></table>
+</body>
+</html>
+<script>
+var form1;
+var wl;
+var mcssTable;
+var currentNodeId;
+var count=1;
+
+$(document).ready(function(){
+	initTree();
+})
+
+function initTree()
+{
+
+ 	var url="__APP__/Mcss/Model/getTree";
+ 	$.getJSON(url,{table:"sys_dept",id:"id",pid:"parentid",name:"name",filter:'SYS_ORGID=orgid()'},function(data){
+  		var orgdata=getTreeJSON(data,'','id','parentid');
+		wl=new MCTree("myorg",orgdata,{field_pid:"parentid",loadstyle:'loadallshowone',srcData:data});
+		wl.run();
+
+	})
+}
+  
+function selectModel(obj)
+{
+	if (parent.setSelectedModel)
+		parent.setSelectedModel(obj,"model");
+}
+var app;
+function filterApp(obj)
+{
+app=obj.value;
+var filter="";
+if (obj.value)
+	filter="apps like '%"+obj.value+"%'";
+initTree(filter);
+}  
+
+function search()
+{
+var s=$("#searchtext").val();
+wl.searchNode(s);
+}
+
+function confirm()
+{
+	var obj=$("#"+wl.currentNodeId).find("span").get(0);
+	selectModel(obj);
+}
+
+function gotoSearch()
+{
+	if (event.keyCode==13){
+		search();
+	}
+}
+</script>

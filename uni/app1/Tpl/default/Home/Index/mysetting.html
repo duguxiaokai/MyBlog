@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>用户设置</title>
+ 
+<link href='__PUBLIC__/css/common.css' rel='stylesheet' type='text/css'>
+<link rel='stylesheet' type='text/css' href='__PUBLIC__/themes/{$mcss_theme}/css/common.css' />
+
+<script src="__PUBLIC__/js/jquery.js" ></script>
+<script src="__PUBLIC__/jusaas/js/common.js"></script>
+ 
+
+<script>
+function openiframe(a)
+{
+	var url='';
+	if (a.id=='change_password')
+		url="__APP__/Home/Index/login_pwd";
+	else
+	if (a.id=='mylog')
+		url="__APP__/List/List/list2/param:table/sys_log_my/";
+	
+	$("#mainiframe").attr("src",url);
+}
+
+</script>
+</head>
+<body>
+<h2>设置</h2>
+<br />
+<table width='100%'>
+<tr>
+<td style="width:150px;vertical-align:top;" >
+<ul> 
+<li>
+<a id='change_password' class='labellink' onclick="openiframe(this);">修改登录密码</a>
+</li>
+<li>
+<a id='mylog' class='labellink' onclick="openiframe(this);">操作日志</a>
+</li>
+</ul>
+</td>
+<td>
+<div style="width:100%">
+<iframe id="mainiframe" name="mainiframe"  src="/jusaas/index.php/Home/Index/home" style="width:99.7%;height:600px;"></iframe>
+</div>
+</td>
+</tr>
+</table>
+
+</body>

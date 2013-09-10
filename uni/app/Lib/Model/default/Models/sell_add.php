@@ -1,0 +1,28 @@
+<?php return array(
+'id'=>"sell_add",
+'title'=>"卖单_新增",
+'tablename'=>"td_sell",
+'openurl'=>"defaul",
+'addurl'=>"default",
+'pagerows'=>"10",
+'editintable'=>"false",
+'fields'=>array(
+ array('id'=>'id','name'=>'ID','visibleWhenAdd'=>'false',),
+ array('id'=>'code','name'=>'订单号','readonly'=>'true','nullable'=>'false',),
+ array('id'=>'release_time','name'=>'发布时间','defaultdata'=>'today()',),
+ array('id'=>'validate','name'=>'有效日期','type'=>'date','forsearch'=>'true',),
+ array('id'=>'productid','name'=>'产品名称','type'=>'dropdown','data'=>'sql:select id,name from td_product where level=3','forsearch'=>'true','nullable'=>'false',),
+ array('id'=>'amount','name'=>'持仓量','fieldtype'=>'float','nullable'=>'false','formate'=>'float',),
+ array('id'=>'leastamount','name'=>'起订量','fieldtype'=>'float','forsearch'=>'true','nullable'=>'false',),
+ array('id'=>'price','name'=>'挂牌价','fieldtype'=>'float','forsearch'=>'true','nullable'=>'false',),
+ array('id'=>'address','name'=>'原产地','forsearch'=>'true',),
+ array('id'=>'jiaohuoaddress','name'=>'交货地','defaultdata'=>' 广东',),
+ array('id'=>'packing','name'=>'包装说明',),
+ array('id'=>'standard','name'=>'执行标准',),
+ array('id'=>'buymethod','name'=>'购买方式','type'=>'checkboxlist','data'=>'0:全款,1:贷款','defaultdata'=>'全款',),
+ array('id'=>'status','name'=>'状态','type'=>'dropdown','data'=>'0:新增,1:已发布,2:撮合中,3:自动撮合,4:已过期,5:已撤销,6:已签约','readonly'=>'true','forsearch'=>'true',),
+ array('id'=>'premoney','name'=>'信用金','readonly'=>'true','forsearch'=>'true','nullable'=>'false',),
+ array('id'=>'account','name'=>'选择支付账户','type'=>'dropdown','data'=>'sql:select account,concat( bank, account ) from  td_bankaccount where username=loginuser()','nullable'=>'false',),
+ array('id'=>'loginuser','name'=>'创建用户名','defaultdata'=>'loginuser()','readonly'=>'true',),
+)
+) ?>

@@ -1,0 +1,10 @@
+/* CSS Document */
+input{ margin:0; padding:0;}
+.file-box{ position:relative;width:340px}
+.txt{ height:24px; border:1px solid #cdcdcd; width:173px; float:left; margin-right:2px;}
+.selectbtn{ background-color:#FFF; border:1px solid #CDCDCD;}
+.file{ position:absolute; top:0; right:80px; height:24px; filter:alpha(opacity:0);opacity: 0;width:260px; cursor:pointer}
+input.selectbtn{ width:65px; height:27px; color:#666; border:none; background:url(img/anniubg.png) 0 -53px no-repeat; text-align:center; cursor:pointer; text-shadow:1px 1px 1px #FFF; background-position-y:-54px\9;}
+.file-box:hover input.selectbtn{ background-position:0 1px; color:#FFF;text-shadow:1px 1px 1px black;box-shadow: 0px 0px 4px rgba(200, 200, 200, 0.5);}
+.file-box:hover input.txt{box-shadow: 0px 0px 4px rgba(200, 200, 200, 0.5);}
+

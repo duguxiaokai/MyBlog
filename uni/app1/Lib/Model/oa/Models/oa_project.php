@@ -1,0 +1,27 @@
+<?php return array(
+'id'=>"oa_project",
+'title'=>"项目列表",
+'tablename'=>"oa_project",
+'openurl'=>"Project/projectdetail",
+'actions'=>"add,del,open,edit,search,search2,export,page",
+'cols'=>"2",
+'more'=>"[PUBLIC]",
+'fields'=>array(
+ array('id'=>"id",'name'=>"ID",'fieldtype'=>"int",'visibleWhenAdd'=>"false",),
+ array('id'=>"name",'name'=>"项目名称",'forsearch'=>"true",'nullable'=>"false",),
+ array('id'=>"executer",'name'=>"项目经理",'fieldtype'=>"string",),
+ array('id'=>"begindate",'name'=>"开始日期",'fieldtype'=>"date",'type'=>"date",'defaultdata'=>"today()",'forsearch'=>"true",),
+ array('id'=>"enddate",'name'=>"结束日期",'fieldtype'=>"date",'type'=>"date",'forsearch'=>"true",),
+ array('id'=>"status",'name'=>"状态",'fieldtype'=>"string",'length'=>"10",'type'=>"dropdown",'data'=>",plan:计划,doing:执行,done:完成,cancel:取消",'defaultdata'=>"plan",'forsearch'=>"true",),
+ array('id'=>"tasktypes",'name'=>"任务分类",'type'=>"popupselectone",'data'=>"model:oa_tasktype",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"finishper",'name'=>"完成率",'fieldtype'=>"float",'type'=>"dropdown",'data'=>"0:0%,0.1:10%,0.2:20%,0.3:30%,0.4:40%,0.5:50%,0.6:60%,0.7:70%,0.8:80%,0.85:85%,0.9:90%,0.95:95%,1:100%",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"content",'name'=>"项目概述",'fieldtype'=>"string",'type'=>"richeditor",'isvisible'=>"false",),
+ array('id'=>"taskfields",'name'=>"任务字段",'fieldtype'=>"string",'length'=>"100",'isvisible'=>"false",),
+ array('id'=>"SYS_ADDUSER",'name'=>"创建者",'fieldtype'=>"string",'length'=>"50",'type'=>"SYS_ADDUSER",'isvisible'=>"true",'readonly'=>"true",'forsearch'=>"true",),
+ array('id'=>"SYS_ADDTIME",'name'=>"创建日期",'fieldtype'=>"date",'type'=>"date",'defaultdata'=>"today()",'visibleWhenAdd'=>"false",'readonly'=>"true",'forsearch'=>"true",'style'=>"text-align:center",),
+ array('id'=>"SYS_EDITUSER",'name'=>"更新人",'fieldtype'=>"string",'length'=>"50",'type'=>"SYS_EDITUSER",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"SYS_EDITTIME",'name'=>"更新时间",'fieldtype'=>"datetime",'type'=>"SYS_EDITTIME",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"SYS_ORGID",'name'=>"组织ID",'fieldtype'=>"int",'type'=>"SYS_ORGID",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+),
+
+) ?>

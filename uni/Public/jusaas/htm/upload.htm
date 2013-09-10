@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> <!--dtd协议-->
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="filestyle.css" rel="stylesheet" type="text/css"/>
+<body>
+<div class="file-box">
+<form name="form1">
+ <input type='text' name='textfield' id='textfield' class='txt' />  
+ <input type='button' class='selectbtn' value='选择' />
+ <input type='file' name='mcssuploadfile[image1]' id='mcssuploadfile' class="file" onchange="selectFile(this);" />
+ <input type='button' id='uploadbutton' value="预览" onclick='beginUpload()' style="display:none;" />	
+</form>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	var u=document.location.href;
+	var idx=u.indexOf("?");
+	u=u.substr(idx+1);
+	var modelid=getParamValue(u,"modelid");//模型id	
+	var formid=getParamValue(u,"formid");	
+	var recordid=getParamValue(u,"recordid");	
+	var fieldid=getParamValue(u,"fieldid");//id	字段
+	document.getElementById("mcssuploadfile").name=	modelid+"["+fieldid+"]";
+	
+function beginUpload()
+{
+	var strFullPath = location.href;
+	var pos = strFullPath.indexOf('/Public');
+	var prePath=strFullPath.substring(0,pos);
+	var act=prePath+"/index.php/System/Model/saveUploadedFile/modelid/"+modelid+"/fieldid/"+fieldid+"/recordid/"+recordid;
+	document.form1.action=act;
+	document.form1.method="POST";
+	document.form1.encoding="multipart/form-data";
+	document.form1.submit();	
+}
+
+function getParamValue(url,param_name)
+{   
+	if (url)
+	{
+		var params=url.split("/");
+		for(var i=0;i<params.length;i++)
+		{   
+			if (params[i]==param_name && i<params.length)
+				{return params[i+1];}
+		}
+	}
+	return "";
+
+}
+function selectFile(e)
+{
+	document.getElementById('textfield').value=e.value;
+	parent.document.getElementById(formid+'_'+fieldid).value=e.value;
+}
+</script>

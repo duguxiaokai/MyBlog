@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> <!--dtd协议-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>列表</title>
+<link href="__PUBLIC__/themes/default/css/common.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/themes/default/css/otherweb.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/auoform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script type="text/javascript" src='__PUBLIC__/js/popup.js'></script>
+<script type="text/javascript" src="__PUBLIC__/Landz/js/scrolltopcontrol.js"></script>
+  
+<script type="text/javascript">
+$(document).ready(function() {
+	
+	var field_dealing=[{'status':show_status}];
+	var mcssTable=new MCSSTable({tableid:"mcss_table",modelid:"oa_task_xd",showfirst:true,special_field_show:field_dealing,showRecordActionAtLast:true});
+	mcssTable.run();
+	
+	var mcssTable1=new MCSSTable({tableid:"mcss_table1",modelid:"oa_task_myexecute",showfirst:true,special_field_show:field_dealing,showRecordActionAtLast:true});
+	mcssTable1.run();
+	
+	var mcssTable2=new MCSSTable({tableid:"mcss_table2",modelid:"oa_task_assign_my",showfirst:true,special_field_show:field_dealing,showRecordActionAtLast:true});
+	mcssTable2.run();
+});
+
+function show_status(fieldvalue,record)
+{
+
+	if(record.finishper)
+	{
+		if(record.finishper == '0')
+		{
+			return "计划";
+		}else if( 0.1 <= record.finishper && record.finishper<= 0.95)
+		{
+			return "执行";
+		}else if(record.finishper == '1')
+		{
+			return "完成";
+		}
+	}
+
+}
+
+</script>
+</head>
+
+<body>
+<div class="gukeCon">
+	<div style='text-align:left;'>
+	<div class="secondTitle">我下达的任务</div>
+	<table id="mcss_table"></table>
+	<div class="secondTitle">我执行中的任务</div>
+	<table id="mcss_table1"></table>
+	<div class="secondTitle">分配给我的任务</div>
+	<table id="mcss_table2"></table>
+</div>
+</div>
+<div id='background' class='background'></div><div id='progressBar' class='progressBar'>数据加载中，请稍等...</div>
+</body>
+</html>

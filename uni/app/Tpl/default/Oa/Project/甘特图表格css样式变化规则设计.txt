@@ -1,0 +1,8 @@
+甘特图表格css样式变化规则设计
+
+创建标准的mcsstable时，在加载完表格数据后如果没有applyMyTableStyle参数，则确定默认样式：table：宽度值100%；td：可折行。
+然后第一次单击“自动调整宽度按钮”把表格样式变为:table:允许折行，宽度值100%。
+
+创建甘特图时，加载完数据后，通过mcsstable的加载自定义样式方法（applyMyTableStyle）来代替mcsstable的默认样式事件。具体分为两种：
+甘特图模式是浏览模式（非tableedit）时，样式调整为：table-layout：fixed;width:""，时间线内容允许跨界（overflow：visible）。
+甘特图模式是全表编辑模式（tableedit）时，样式调整为：table-layout："";width:""，时间线内容允许跨界（overflow：hidden）。

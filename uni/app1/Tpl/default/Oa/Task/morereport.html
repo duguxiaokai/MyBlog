@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>工作台</title>
+<link href="__PUBLIC__/themes/default/css/common.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/themes/default/css/otherweb.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jusaas/calendar/McssCalendar.css" rel="stylesheet" type="text/css">
+<script src="__PUBLIC__/themes/default/js/jquery-1.4.4.min.js" type="text/javascript"></script>
+<script src="__PUBLIC__/themes/default/js/css.js" type="text/javascript"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/calendar/McssCalendar.js"></script>
+<script type="text/javascript" src='__PUBLIC__/js/popup.js'></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script type="text/javascript">
+$(document).ready(function() 
+{	
+	var s=location.href;
+	var date=getParamValue(s,"date");
+	var sbegin = getParamValue(s,'periodBegin');
+	var send = getParamValue(s,'periodEnd');
+	var staffid = getParamValue(s,'staffid');
+	var url="__APP__/Oa/Task/getloginuserBYstaffid";
+	if(date)
+	{
+		$.post(url,{staffid:staffid},function(data){
+			var filter="((executerid="+staffid+" or SYS_ADDUSER='"+data+"') and cat='日报' and tag=2) and ((begindate<='"+date+"' and enddate>='"+date+"') or  (begindate>='"+date+"' and enddate<='"+date+"') or (begindate<='"+date+"' and enddate>='"+date+"') or (begindate<='"+date+"' and enddate>='"+date+"'))";
+			var mcssTable=new MCSSTable({tableid:"morereport",modelid:'oa_task_month_copy',width:'100%',filter:filter,useActionIcon:true,style:'simple',toolbar:'edit,del'});
+			mcssTable.run();
+		});
+	}else{
+		$.post(url,{staffid:staffid},function(data){
+			var filter ="(datediff('"+sbegin+"',begindate)>=0 and datediff('"+send+"',enddate)<=0) and ((executerid="+staffid+" and cat='日报') or ((SYS_ADDUSER='"+data+"' or executerid="+staffid+") and (cat='周报' or cat='月报')) and tag=2)";
+			var mcssTable=new MCSSTable({tableid:"morereport",modelid:'oa_task_month_copy',width:'100%',filter:filter,style:"simple"});
+			mcssTable.run();
+		});
+	}
+});	
+
+</script>
+</head>
+<body>
+	<table id='morereport'></table>
+</body>
+</html>

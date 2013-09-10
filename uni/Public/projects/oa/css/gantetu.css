@@ -1,0 +1,25 @@
+.gantetuCon .mcsstable tr td{border:#DEDEDE 0px solid}
+.tasklist{ border:none; border-collapse:collapse}
+.tasklist tr td,.tasklist tr th{border:#C5C5C5 1px solid; }
+.gante_header{white-space: nowrap;text-align:center; background-color:#F9F9F9}
+.gantetuCon .mcsstable tr td.gantetu_timeline{background-color:rgb(150,150,150);border-right:gray 0px solid;width:2px;overlow:hidden;}
+
+.td_work_unstarted{background:url(../images/finish_none.png) no-repeat;height:20px;background-position: center;}
+.td_work_doing{background:url(../images/finish_half.png) no-repeat;height:20px;background-position: center;}
+.td_work_done{background:url(../images/finish_full.png) no-repeat;height:20px;background-position: center;}
+
+
+
+.holiday_th{background-color:#F0F0F0; color:#000;font-weight:normal;width:25px}
+.workday_th{ text-align:center; font-weight:normal;width:25px}
+.gante_taskt_td{background-color:white; height:20px;}
+.colspan_td{background-color:#fefbea;font-weight:bold; color:#000; padding-left:10px;}
+
+
+	.gantetuCon .mcsstable tr th{ line-height:normal;white-space:nowrap;}
+	.gantetuCon .mcsstable tr td input[type='text']{ padding-left:2px;}
+
+.project_header{padding-left:10px;}
+.title_big{font-size:20px;color:blue;}
+.tabname{font-size:15px;padding-top:15px;}
+

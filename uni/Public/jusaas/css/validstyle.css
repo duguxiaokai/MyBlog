@@ -1,0 +1,12 @@
+@charset "utf-8";
+/* CSS Document */
+/*验证错误信息*/
+.err_info{border: 1px solid #CCC;padding: 2px 20px 2px 5px;color: #666;position: absolute; z-index:9999;display: none;line-height: 20px;background-color: white;}
+.Validform_checktip{line-height: 20px;height: 20px;overflow: hidden;color: #999;font-size: 12px;}
+.Validform_wrong{color: red;padding-left: 20px;white-space: nowrap;background: url(../images/error.png) no-repeat left center;}
+.dec{bottom: -8px;display: block;height: 8px;overflow: hidden;position: absolute;left: 10px;width: 17px;}
+.dec s{font-family: simsun;font-size: 16px;height: 19px;left: 0;line-height: 21px;position: absolute;text-decoration: none;top: -9px;width: 17px;}
+.dec .dec1 {color: #CCC;}
+.dec .dec2 {color: white;top: -10px;}
+input.Validform_error,textarea.Validform_error{background: #FFE7E7}
+

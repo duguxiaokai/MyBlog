@@ -1,0 +1,26 @@
+<?php return array(
+'id'=>"oa_pm_projectcost",
+'title'=>"项目费用管理",
+'tablename'=>"oa_project",
+'filter'=>"SYS_ORGID = orgid()",
+'actions'=>"edit,page",
+'cols'=>"3",
+'fields'=>array(
+ array('id'=>"id",'name'=>"ID",'fieldtype'=>"int",),
+ array('id'=>"code",'name'=>"项目编码",'fieldtype'=>"string",'readonly'=>"true",),
+ array('id'=>"name",'name'=>"项目名称",'fieldtype'=>"string",'readonly'=>"true",),
+ array('id'=>"cost_contractmoney",'name'=>"项目金额",'fieldtype'=>"float",),
+ array('id'=>"cost_planed",'name'=>"计划工资成本",'fieldtype'=>"float",),
+ array('id'=>"cost_sales",'name'=>"销售费用",'fieldtype'=>"float",),
+ array('id'=>"cost_managent",'name'=>"办公与管理费用",'fieldtype'=>"float",),
+ array('id'=>"cost_salary",'name'=>"工资成本",'fieldtype'=>"float",'readonly'=>"true",),
+ array('id'=>"cost_other",'name'=>"其它成本",'fieldtype'=>"float",),
+ array('id'=>"cost_total",'name'=>"总成本",'fieldtype'=>"float",'readonly'=>"true",),
+ array('id'=>"cost_profit",'name'=>"利润",'fieldtype'=>"float",'readonly'=>"true",),
+ array('id'=>"cost_tax",'name'=>"税",'fieldtype'=>"float",),
+ array('id'=>"cost_aftertax",'name'=>"税后利润",'fieldtype'=>"float",'readonly'=>"true",),
+ array('id'=>"SYS_EDITUSER",'name'=>"更新者",'fieldtype'=>"string",'type'=>"SYS_EDITUSER",'readonly'=>"true",),
+ array('id'=>"SYS_EDITTIME",'name'=>"更新时间",'fieldtype'=>"datetime",'type'=>"SYS_EDITTIME",'readonly'=>"true",),
+),
+
+) ?>

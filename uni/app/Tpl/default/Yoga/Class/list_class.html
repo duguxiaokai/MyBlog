@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Class List</title>
+</head>
+<script src="__PUBLIC__/Js/jquery.js"></script>
+<script src='__PUBLIC__/js/popup.js'></script>
+<script type="text/javascript">
+function mod_editFriblog(url){
+    g_pop=new Popup({ contentType:1, isReloadOnClose:false, width:390, height:450,isSupportDraging:true});
+	g_pop.setContent("title","Edit Class");
+    g_pop.setContent("contentUrl",url);
+    g_pop.build();
+	g_pop.show();
+	return false;
+}
+function mod_editFriblog1(url){
+    g_pop=new Popup({ contentType:1, isReloadOnClose:false, width:390, height:450,isSupportDraging:true});
+	g_pop.setContent("title","Edit Class");
+    g_pop.setContent("contentUrl",url);
+    g_pop.build();
+	g_pop.show();
+	return false;
+}
+function  selectStaffAll()
+{
+	var clsId=document.getElementsByName("clsId");
+	for(var i=0;i<clsId.length; i++){
+		clsId[i].checked==true?clsId[i].checked=false:clsId[i].checked=true;
+	}
+}
+function moredel(){
+	var clsId=document.getElementsByName("clsId");
+	var ary=[];
+	for(var i=0;i<clsId.length;i++){
+		if(clsId[i].checked==true)
+		{
+		    ary.push(clsId[i].value);
+		}
+	}
+	var arr=ary.join(",");
+	if(arr==''){
+		alert("Please Select One！");
+		return;
+	}
+	else if(confirm("Sure You Want To Delete IT？")){
+		var url=window.location.href="__APP__/CRM/Customer/moredelcus?clsIds="+arr;
+	}	
+}
+</script>
+<body class='bodyfontsize'>
+<form action="" method="post">
+	<table class='liststyl' width="800px" cellspacing="0" cellpadding="0">
+		<tr>
+    		<td class='tabletr' colspan="10" style="font-size:14px"><b>班级列表</b></td>
+  		</tr>
+	  <tr class='tabletr'>
+		<td class="liststyltd"><input type="checkbox" id="clsIds" name="clsIds" onClick="return selectStaffAll()"/> <a href="#" onClick="return moredel()">删除</a>-<a href="#" onClick="mod_editFriblog('__APP__/CRM/Customer/newcustomer/src/list')">新增</a></td>
+		<td class="liststyltd">编号</td>
+		<td class="liststyltd">班级类别</td>
+		<td class="liststyltd">学生人数</td>
+		<td class="liststyltd">教师名称</td>
+		<td class="liststyltd">上课时间</td>
+		<td class="liststyltd">上课地点</td>
+		<td class="liststyltd">费用</td>
+		<td class="liststyltd">报名联系人</td>
+		<td class="liststyltd">联系电话</td>
+		<td class="liststyltd">备注</td>
+	  </tr>
+	  <volist name='list' id='vo'>
+	  <tr>
+		<td class="liststyltd"><input type="checkbox" id="clsId" name="clsId" value="{$vo.id}"/>
+		<a href="#" onClick="window.open('__APP__/CRM/Customer/showonecustomer/id/{$vo.id}')">打开</a>
+		<a href="#" onClick="mod_editFriblog('__APP__/CRM/Customer/editcustomer/id/{$vo.id}')">编辑</a>
+		<td class="liststyltd">{$vo.id}</td>
+		<td class="liststyltd">{$vo.name}</td>
+		<td class="liststyltd">{$vo.count_stu}</td>
+		<td class="liststyltd">{$vo.teacherid}</td>
+		<td class="liststyltd">{$vo.datelist}</td>
+		<td class="liststyltd">{$vo.location}</td>
+		<td class="liststyltd">{$vo.free}</td>
+		<td class="liststyltd">{$vo.linkman}</td>
+		<td class="liststyltd">{$vo.telephone}</td>
+		<td class="liststyltd">{$vo.remark}</td>
+	   </tr>
+  </volist>
+</table>
+<div style="margin:10px 0 0 20px;">{$page}</div>
+</form>
+</body>
+</html>

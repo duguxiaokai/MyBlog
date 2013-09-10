@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href='__PUBLIC__/css/common.css' rel='stylesheet' type='text/css'>
+<title>编辑</title>
+</head>
+<script type="text/javascript" src="__PUBLIC__/js/DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCDateTime.js"></script>
+<script type="text/javascript">
+function regest(){
+	window.parent.g_pop.close();
+}
+function beforeupdate()
+{
+var newnote=$("#newnote").val();
+if (newnote.length>0)
+{
+var notes=$("#notes").val();
+dt=getdatetime();
+//user ="";//loginuser();
+//alert(user);
+$("#notes").val(dt+":\r\n"+newnote+"\r\n\r\n"+notes);
+}
+}
+function useName(){
+	var val=$("#executer").val();
+	var urlpath="__APP__/OA/Task/selecuser/";	
+	$.ajax({
+	   type: "POST",
+	   url: urlpath,
+	   data: "val="+val,
+	   success: function(msg){
+		   $('#executerid').val(msg);
+	   }
+	});
+}
+</script>
+<body class='bodyfontsize'>
+<form method="post" action="__APP__/OA/Task/updaterecord">
+<input type='hidden' name='id'  value='{$data["id"]}'>
+<table width="515" cellpadding="10" cellspacing="0" class="table">
+  <tr>
+    <td width="265" style="vertical-align:top;">
+		<table width="265">
+		  <tr>
+			<td align="right"><strong>所属项目:</strong></td>
+			<td>
+				<select id="project" name="project" style="width:155px;">
+					<option value="{$data["project"]}">{$data["project"]}</option>
+					<option value="学习">学习</option>
+					<option value="建研">建研</option>
+					<option value="铜道网">铜道网</option>
+					<option value="华润">华润</option>
+				</select></td>		
+		  </tr>
+		  <tr>
+			<td align="right"><strong>工作名称:</strong></td>
+			<td><input class="tdinput" type="text" name='name' id='name' value='{$data["name"]}' /></td>
+		  </tr>
+		  <tr>
+			<td align="right"><strong>类别:</strong></td>
+			<td>
+				<select id="cat" name="cat" style="width:155px;">
+					<option value="{$data['cat']}">{$data["cat"]}</option>
+					<option value="新工作">新工作</option>
+					<option value="Bug">Bug</option>
+					<option value="其它">其它</option>
+				</select>
+			</td>
+		  </tr>
+		  
+		  <tr>
+			<td align="right" valign="top"><strong>描述:</strong></td>
+			<td><textarea class="tdinput"  rows="6" cols="15" name="desp" id='desp'>{$data["desp"]}</textarea>
+			</td>
+		  </tr>
+		  
+		 <tr>
+			<td align="right"><strong>开始日期:</strong></td>
+			<td><input  class="tdinput" type="text" name='begindate' id='begindate' onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd'})"  value="{$data['begindate']}" /></td>
+		  </tr>
+		 <tr>
+			<td align="right"><strong>结束日期:</strong></td>
+			<td><input  class="tdinput" type="text" name='enddate' id='enddate' onFocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd'})"  value="{$data['enddate']}" /></td>
+		  </tr>
+		  <tr>
+			<td align="right"><strong>创建人账号：</strong></td>
+			 <td>
+			<input type="text" id="loginuserid" name="loginuserid" value="{$data['loginuserid']}" readonly />
+			</td>
+		  </tr>	
+		  <tr>
+			<td align="right"><strong>创建人：</strong></td>
+			<td>
+				<select id="loginuser" name="loginuser" style="width:155px;">
+				    <option value="{$data['loginuser']}">{$data['loginuser']}</option>
+					<volist name='type' id='vo'>
+						<option value="{$vo.name}">{$vo.name}</option>
+					</volist>
+					<!--<option value="段希宝">段希宝</option>
+					<option value="靳晨龙">靳晨龙</option>
+					<option value="孙秀梅">孙秀美</option>
+					<option value="赵运国">赵运国</option>
+					<option value="陈坤极">陈坤极</option>
+					<option value="郑然">郑然</option>-->
+				</select>
+          </td>
+		  </tr>	
+		   <tr>
+			<td align="right"><strong>执行人账号：</strong></td>
+			<td>
+				<input id="executerid" name="executerid" style="width:155px" value="{$data['executerid']}" readonly />
+          </td>
+		  </tr>	  		  
+		  <tr>
+			<td align="right"><strong>执行人:</strong></td>
+			<td>
+				<select id="executer" name="executer" style="width:155px;" onChange="useName()">
+					<option value="{$data['executer']}">{$data['executer']}</option>
+					<volist name='type' id='vo'>
+						<option value="{$vo.name}">{$vo.name}</option>
+					</volist>
+					<!--<option value="所有人">所有人</option>
+					<option value="段希宝">段希宝</option>
+					<option value="靳晨龙">靳晨龙</option>
+					<option value="孙秀梅">孙秀美</option>
+					<option value="赵运国">赵运国</option>
+					<option value="郑然">郑然</option>
+					<option value="陈坤极">陈坤极</option>-->
+				</select>
+			
+			</td>
+		  </tr>
+
+		  <tr>
+			<td align="right"><strong>状态:</strong></td>
+			<td>
+				<select id="status" name="status" style="width:155px;">
+					<option value="{$data['status']}">{$data['status']}</option>
+					<option value="完成">完成</option>
+					<option value="取消">退回</option>
+					<option value="取消">取消</option>
+				</select>
+			
+			</td>
+		  </tr>
+		  
+		  <tr>
+		 	<td align="right"><strong>评分:</strong></td>
+			<td><input class="tdinput" type='text' name='score' id='score'value='{$data["score"]}' /></td>
+		 </tr>
+		</table>
+	</td>
+    <td width="232" style="vertical-align:top;"><table width="210" height="285">
+		  <tr>
+			<td width="73" height="83" align="right" valign="top"><strong>添加备注:</strong></td>
+            <td width="125" valign="top"><textarea class="tdinput"  rows="6" cols="15" name="newnote" id='newnote' style="margin:0"></textarea></td>
+		  </tr>
+		  <tr>
+			<td align="right" valign="top"><strong>备注历史:</strong></td>
+            <td valign="top">  <textarea style="background-color:gray" readonly="true" class="tdinput"  rows="10" cols="15" name="notes" id='notes'>{$data["notes"]}</textarea></td>
+		  </tr>
+        </table>
+    </td>	
+  </tr>
+  <tr>
+    <td class='tabletr' colspan="2" align="center"><input type="submit" value="确定" class="formbutton" onClick ="beforeupdate();" onMouseOut="this.className='formbutton';" onMouseOver="this.className='formbutton_hover';"/>&nbsp;&nbsp;&nbsp;&nbsp;<input type="reset" value="取消" class="formbutton" onMouseOut="this.className='formbutton';" onMouseOver="this.className='formbutton_hover';" onClick="return regest()"></td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

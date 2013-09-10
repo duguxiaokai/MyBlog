@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href='__PUBLIC__/css/common.css' rel='stylesheet' type='text/css'>
+<title>新建岗位</title>
+</head>
+<body class='bodyfontsize'>
+<form method="post" action="__APP__/Role/insertrole/">
+<table class='table' width="300" height="100" cellspacing="0" cellpadding="10">
+  <tr>
+    <td class='tabletr' colspan="2" style="font-size:14px"><b>新建岗位</b></td>
+  </tr>
+  <tr>
+    <td>
+		<table width="300" cellspacing="0" cellpadding="5"  align="center">
+		  <tr>
+			<td><strong>岗位名称</strong></td>
+			<td><input type="text" name='name' id='name'></td>
+		  </tr>
+		 <tr>
+			<td><strong>隶属部门</strong></td>
+				<td><select name='dept' id='dept'>
+					<option>--请选择--</option>
+					<volist name='data' id='vo'>
+					<option>{$vo.name}</option>
+					</volist>
+				</td></select>
+		  </tr>
+		</table>
+	</td>
+  </tr>
+  <tr>
+    <td class='tabletr' colspan="2" align="center"><input type="submit" value="确定" onClick="return checksubmit();">&nbsp;&nbsp;&nbsp;&nbsp;<input type="reset" value="取消"></td>
+  </tr>
+</table>
+</form>
+</body>
+</html>

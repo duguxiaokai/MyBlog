@@ -1,0 +1,36 @@
+
+  .dept { 
+    color: green;
+    margin-left: 20px;
+    margin-top: 0px;
+	float: left;
+	border-top:solid;
+	text-align:center;
+	}
+  .position { 
+    color: red;
+    margin-left: 20px;
+    margin-top: 0px;
+	float: left;
+	border-top:solid;
+	text-align:center;
+  
+  }
+  .staff { 
+    color: black;
+    margin-left: 20px;
+    margin-top: 0px;
+	float: left;
+	text-align:center;
+  
+  }  
+  #status{
+  	position:fix;
+  	margin-top:10px;
+  }
+  .action{
+		 
+		float:center;
+		1width:50px;
+		 
+  }

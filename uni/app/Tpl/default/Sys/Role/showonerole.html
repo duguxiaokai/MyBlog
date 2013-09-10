@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href='__PUBLIC__/css/comm.css' rel='stylesheet' type='text/css'>
+<title>显示岗位</title>
+</head>
+<body class='bodyfontsize'>
+<table class='table' width="300" height="200" cellspacing="0" cellpadding="10">
+  <tr>
+    <td class='tabletr' colspan="2" style="font-size:14px"><b>显示岗位</b></td>
+  </tr>
+  <tr>
+    <td>
+		<table width="300" cellspacing="0" cellpadding="5"  align="center">
+		  <tr>
+			<td>岗位名称</td>
+			<td>{$data["name"]}</td>
+		  </tr>
+		 <tr>
+			<td>所属部门</td>
+			<td>{$data["dept"]}</td>
+		  </tr>
+		</table>
+	</td>
+  </tr>
+  <tr>
+    <td class='tabletr' colspan="2" align="center"><input type="button" value="返回" onclick='javascript:window.history.back();' ></td>
+  </tr>
+</table>
+</body>
+</html>

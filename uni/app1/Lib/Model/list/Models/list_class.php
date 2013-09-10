@@ -1,0 +1,26 @@
+<?php return array(
+'id'=>"list_class",
+'title'=>"Class List",
+'tablename'=>"yoga_class",
+'openurl'=>"yoga/Class/editclass",
+'editurl'=>"yoga/Class/editclass",
+'addurl'=>"yoga/Class/addclass",
+'open_window_style'=>"samewindow",
+'actions'=>"add,del,open,search,page",
+'fields'=>array(
+ array('id'=>"name",'name'=>"Class type",'forsearch'=>"true",),
+ array('id'=>"count_stu",'name'=>"Total Enrolled",'forsearch'=>"true",),
+ array('id'=>"teacher",'name'=>"Teacher",'forsearch'=>"true",),
+ array('id'=>"location",'name'=>"Centre",'forsearch'=>"true",),
+ array('id'=>"free",'name'=>"Fee",'forsearch'=>"true",),
+ array('id'=>"starttime",'name'=>"First Class",'type'=>"date",'readonly'=>"true",'forsearch'=>"true",),
+ array('id'=>"endtime",'name'=>"Last Class",'type'=>"date",'readonly'=>"true",'forsearch'=>"true",),
+ array('id'=>"datetimelist",'name'=>"Class Ddates",'type'=>"textarea",'forsearch'=>"true",),
+ array('id'=>"linkman",'name'=>"Contact",'forsearch'=>"true",),
+ array('id'=>"telephone",'name'=>"Contact No.",'forsearch'=>"true",),
+ array('id'=>"remark",'name'=>"Notes",'forsearch'=>"true",),
+ array('id'=>"lessontime",'name'=>"Times",'forsearch'=>"true",),
+ array('id'=>"id",'name'=>"ID",'fieldtype'=>"int",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+),
+
+) ?>

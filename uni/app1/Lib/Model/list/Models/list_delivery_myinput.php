@@ -1,0 +1,26 @@
+<?php return array(
+'id'=>"list_delivery_myinput",
+'title'=>"我的发货单",
+'tablename'=>"crm_invoice",
+'editurl'=>"CRM/Invoice/add_invoice",
+'addurl'=>"CRM/Invoice/add_invoice",
+'filter'=>"loginuser=loginuser()",
+'pagerows'=>"15",
+'actions'=>"add,del,open,edit,search,search2,page,export",
+'fields'=>array(
+ array('id'=>"id",'name'=>"ID",'fieldtype'=>"int",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"no",'name'=>"特快专递号",'forsearch'=>"true",'style'=>"text-align:center",),
+ array('id'=>"sendate",'name'=>"发货日期",'type'=>"date",'forsearch'=>"true",),
+ array('id'=>"receiver",'name'=>"收件人",'forsearch'=>"true",'style'=>"text-align:center",),
+ array('id'=>"tel",'name'=>"电话",'forsearch'=>"true",),
+ array('id'=>"userno",'name'=>"用户号",'forsearch'=>"true",'style'=>"text-align:center",),
+ array('id'=>"orderno",'name'=>"订单号",'forsearch'=>"true",'style'=>"text-align:center",),
+ array('id'=>"postalcode",'name'=>"邮政编码",'forsearch'=>"true",'style'=>"text-align:center",),
+ array('id'=>"invoices",'name'=>"发票号",'forsearch'=>"true",),
+ array('id'=>"type",'name'=>"货物类别",'forsearch'=>"true",'style'=>"text-align:center",),
+ array('id'=>"way",'name'=>"方式",'forsearch'=>"true",'style'=>"text-align:center",),
+ array('id'=>"loginuser",'name'=>"输入者",'forsearch'=>"true",'style'=>"text-align:center",),
+ array('id'=>"id",'name'=>"ID",'fieldtype'=>"int",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+),
+
+) ?>

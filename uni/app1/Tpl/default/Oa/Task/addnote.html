@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> <!--dtd协议-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+<link href='__PUBLIC__/themes/{$mcss_theme}/css/common.css' rel='stylesheet' type='text/css'>
+
+<script type="text/javascript" src="__PUBLIC__/js/jquery.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script src="__PUBLIC__/jusaas/js/dom.js" ></script>
+<script src="__PUBLIC__/js/My97DatePicker/WdatePicker.js"></script>
+</head>
+
+<body>
+<div id="formdata" class="formdataCon"></div>
+<div style='text-align:left; padding:10px'>
+	<a href="javascript:void(0)" onclick='saveRecord()' class="mcssingbutton">保存</a>
+</div>
+<table id="mcss_table" border='1'></table>
+</body>
+</html>
+
+<script type="text/javascript">
+var form;
+$(document).ready(function()
+{
+	form=new Autoform('formdata',{modelid:"oa_note_my"}); 
+	form.run();
+	mcssTable=new MCSSTable({tableid:"mcss_table",modelid:"oa_note_my",showfirst:false,last_td_name:'操作'},null,last_td);
+	mcssTable.run();
+});
+
+function last_td(id)
+{
+	return "<input class='daKaiBut' onClick='find_url_del(\""+id+"\")' type='button' value='删除'>|<input class='daKaiBut' onClick='find_urledit(this,\""+id+"\")' type='button' value='编辑'>|<input class='daKaiBut' onClick='find_url_task("+id+")' type='button' value='转工作'>";
+}
+
+function find_urledit(e,id)
+{
+	var s="<div id='"+id+"_autoform'></div>"
+	+"<div style='text-align:center;'><input type='button' id='"+id+"_save' value='保存' class='formbutton' /></div>"
+	+"";	
+	var mcpopup=mcdom.showPopup(e,s,null,null,320,300,200,'编辑');
+	var form1=new Autoform(id+"_autoform",{modelid:'oa_note',recordid:id});   
+	form1.run(autowithpopupForEdit);
+	
+	$("#"+id+"_save").click(function(){
+		form1.save(false,refresh_mctable,true);
+		$(mcpopup).remove();
+	})
+}
+
+function find_url_del(id)
+{
+	$.post("__APP__/Oa/Task/deletenote",{'id':id},function(data){
+		if(data == 1)
+		{
+			alert("已删除");
+			mcsstable_loaddatarows("mcss_table");
+		}
+	});
+}
+
+function find_url_task(id)
+{
+	$.post("__APP__/Oa/Task/note_task",{'id':id},function(data){
+		if(data == 1)
+		{
+			alert("已转化");
+		}
+	});
+}
+
+//更新父窗体的任务列表
+function reload_parent_mctable(id,hint,mcform)
+{
+	if (window.parent.mcss_callback_reload_mctable)
+		parent.mcss_callback_reload_mctable();
+	else
+	{
+		var tableid=common_getParam("tableid");
+		if (tableid)
+			parent.mcsstable_loaddatarows(tableid);
+	}		
+	window.parent.ClosePop();
+}
+
+//保存新增表单后刷新mctable
+function refresh_mctable(recordid,hint,mcform)
+{	
+	mcsstable_loaddatarows("mcss_table");
+}
+
+//自动调整浮层的大小
+function autowithpopupForEdit(form)
+{
+	var w=parseInt($("#"+form.id).width()+50);
+	var h=parseInt($("#"+form.id).height()+50);	
+	var popupid=$("#"+form.id).get(0).parentNode.parentNode.id;
+	$("#"+popupid).css("width",w+"px");
+	$("#"+popupid).css("height",h+"px");
+}
+
+function saveRecord()
+{
+	form.save(false,afterclosenote,false);
+}
+
+function afterclosenote()
+{
+	window.parent.$(".ui_close").click();
+}
+</script>

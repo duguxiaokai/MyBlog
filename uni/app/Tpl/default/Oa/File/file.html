@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<link href='__PUBLIC__/themes/default/css/common.css' rel='stylesheet' type='text/css'>
+	<link href="__PUBLIC__/themes/default/css/otherweb.css" rel="stylesheet" type="text/css">
+	<script src="__PUBLIC__/js/jquery.js" ></script>
+	<script src="__PUBLIC__/jusaas/js/common.js"></script>
+	<script src="__PUBLIC__/jusaas/js/dom.js"></script>
+	<script src="__PUBLIC__/jusaas/mctree/MCTree.js"></script>
+	<script src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+	
+<style>
+
+</style>
+<title>文件管理</title>
+
+</head>
+<body class="padding">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class='tableHeight'>
+<tr>
+<td style='vertical-align:top; width:170px' id="resizeLeft">
+<div style="padding:3px;">
+	<input type='text' id='searchtext' value='' onKeyup="gotoSearch();" class="select_txt_input" style="width:130px;"/>
+	<input type='button' value='搜索' class='selectbutton' onClick="search()">
+	<div id="mctree_div" class='ztree ztree_left'></div>
+</div> 
+</td>
+<td width="7px" style="border-left:#BBBBBB 1px solid;background-color:#F7F7F7;">
+	<a id="NavigationResize" href="javascript:void(0)" class="NavigationResize"></a>
+</td>
+<td class='resizeRight'>
+<div class="ztree_Right">
+<table id="filelist" width="100%"></table> 
+</div> 
+</td>
+</tr>
+</table>
+</body>
+</html>
+<script>
+var form1;
+var wl;
+var mcssTable;
+var currentNodeId;
+var count=1;
+var field_dealing;
+$(document).ready(function(){
+	field_dealing=[{'name':myshow}];
+	initTree();
+	mcssTable=new MCSSTable({tableid:"filelist",modelid:"oa_file",showfirst:true,first_td_name:"-",width:'100%',special_field_show:field_dealing ,deleteRow:deleterow});
+	mcssTable.run();
+	//展开收起
+	$('#NavigationResize').toggle(function(){
+		$('#resizeLeft').hide();
+		$(this).addClass('NavigationResize_toggle');
+	},function(){
+		$('#resizeLeft').show();
+		$(this).removeClass('NavigationResize_toggle');
+	});
+	//自动加高宽度
+	var height = document.documentElement.clientHeight-10;
+	$('.tableHeight').height(height);
+})
+function myshow(fieldValue,record){
+	var path="__APP__/Sys/System/download/filename/"+fieldValue;
+	return "<a style='cursor:pointer;' href='"+path+"'>"+fieldValue+"</a>";
+}
+function initTree()
+{
+ 	var url="__APP__/Mcss/Model/getTree";
+	var filter="SYS_ORGID="+getCookie("mcss_orgid");
+ 	$.getJSON(url,{table:"oa_filedir",id:"id",pid:"parentid",name:"name",filter:filter},function(data){	
+  		var orgdata=getTreeJSON(data,'','id','parentid');
+		wl=new MCTree("mctree_div",orgdata,{srcData:data,field_id:"id",field_pid:"parentid",click:clickNode,loadstyle:'loadallshowone'});
+		wl.run();
+	});
+}
+ 
+ 
+
+ 
+ 
+function clickNode(obj)
+{
+	$("span").removeClass("menunav");
+	$(obj).addClass("menunav");
+	var nodeid=$(obj.parentNode).attr('objectid');
+ 
+	var mcssTable=new MCSSTable({tableid:"filelist",modelid:"oa_file",showfirst:true,first_td_name:"-",width:'100%',filter:"dir="+nodeid+"",defaultValue:"dir:"+nodeid,special_field_show:field_dealing,deleteRow:deleterow});
+	mcssTable.run();
+
+}
+
+function deleterow(deleteIds,mctable)
+{
+	var mcdata=new MCSSData(mctable.data,mctable.modeldata);
+	if (getCookie("mcss_loginuser")!='admin')
+	{
+		//alert("不能删除别人的帖子！");
+		MCDom.prototype.alert("您没有删除的权限！","提示","warning","fadeout");
+		return false;
+	}
+	return true;
+}
+
+var app;
+function filterApp(obj)
+{
+app=obj.value;
+var filter="";
+if (obj.value)
+	filter="apps like '%"+obj.value+"%'";
+initTree(filter);
+}  
+
+function search()
+{
+var s=$("#searchtext").val();
+wl.searchNode(s);
+}
+function gotoSearch()
+{
+	if (event.keyCode==13){
+		search();
+	}
+}
+</script>

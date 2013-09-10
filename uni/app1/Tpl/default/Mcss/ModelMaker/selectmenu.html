@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" type="text/css" href='__PUBLIC__/jusaas/mctree/MCTree_left.css' />	
+
+	<script src="__PUBLIC__/js/jquery.js" ></script>
+	<script src="__PUBLIC__/jusaas/js/common.js"></script>
+	<script src="__PUBLIC__/jusaas/mctree/MCTree.js"></script>
+	<script src="__PUBLIC__/jusaas/js/autoform.js"></script>	
+	<script src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+	<script src="__PUBLIC__/jusaas/js/dom.js"></script>
+	
+<style>
+
+</style>
+<title>选择菜单</title>
+
+</head>
+<body>
+过滤:<select id='apps' onchange="filterApp(this)"></select>
+ <input type='text' id='searchtext' style="width:100px" value='' onKeyup="gotoSearch(event);" onFocus="onFocusSearchtext()" />
+<input type='button' value='搜索' onclick="search()">
+<br />提示：选定节点后双击表示确定
+
+<table id="main_table"><tr>
+<td style='vertical-align:top;'> 
+<div id="mctree_div" class='ztree'>加载中...</div> 
+<div><input type='button' value='确定' onclick="ok()">
+</div> 
+</td>
+<td style="vertical-align:top;">
+ 
+ 
+</td></tr></table>
+</body>
+</html>
+<script>
+var form1;
+var wl;
+var mcssTable;
+var currentNodeId;
+var count=1;
+
+$(document).ready(function(){
+	$.get("__APP__/Home/Index/getAllOrgs",{field:"code"},function(data){
+		$("#apps").html( createSelect(","+data));
+		var app=getCookie("mcss_orgid");
+		$("#apps").val(app);
+		var obj=$("#apps").get(0);
+		filterApp(obj);
+		
+	})	
+})
+
+//有些字符从html客户端传到php服务器时，会被转义，或处理出错，需要用其他自定义字符替换，到后台后在转化回原来的字符
+function convertSpecialChar(str)
+{
+	return str = str.replace(/\'/g, "<yh>");//把单引号转化为"<yh>"
+}
+function initTree(filter,callback)
+{
+	$("#mctree_div").empty();
+ 	var url="__APP__/Mcss/Model/getTree";
+	var filter=convertSpecialChar(filter);
+	if (!filter)
+		filter="";
+ 	$.getJSON(url,{table:"sys_function",id:"no",pid:"groupno",name:"name",filter:filter,orderby:"sort"},function(data){
+		//alert(data);return;
+		if (!data || data.length==0)
+		{
+			$("#beginCreate").show();
+		}
+  		var orgdata=getTreeData(data,'no','groupno');
+		
+		wl=new MCTree("mctree_div",orgdata,{srcData:data,field_id:"no",field_pid:"groupno",dblclick:selectMenu,loadstyle:'loadallshowone'});
+		wl.run(callback);
+	})
+}
+ 
+ 
+
+function selectMenu()
+{
+	if (parent.setSelectedModel)
+	{
+		parent.setSelectedModel(wl.currentNode.parentNode,"menu");
+	}
+} 
+  
+ 
+//根据组织id刷新功能树
+function refreshTree(orgid)
+{
+	$.get("__APP__/Sys/System/get1bysql",{sql:"select code from sys_org where id="+orgid},function(orgcode){
+		filter="apps like '%"+orgcode+"%'";
+		initTree(filter);
+	})
+} 
+
+var app;
+function filterApp(obj)
+{
+	if (obj.value)
+	{
+		refreshTree(obj.value);
+	}
+	else
+		initTree("");
+
+}
+
+function search()
+{
+var s=$("#searchtext").val();
+wl.searchNode(s);
+}
+
+function gotoSearch(event)
+{
+	if (!event) {
+	   var event = window.event;
+	}
+	if (event.keyCode==13){
+		search();
+	}	
+}
+function onFocusSearchtext()
+{
+var s=$("#searchtext").val();
+if (s=="输入搜索词")
+	$("#searchtext").val("");
+
+}
+function ok()
+{
+	selectMenu();
+} 
+ 
+ 
+</script>

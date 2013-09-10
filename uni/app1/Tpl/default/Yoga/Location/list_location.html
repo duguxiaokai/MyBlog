@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>地点列表</title>
+</head>
+<script src="__PUBLIC__/Js/jquery.js"></script>
+<script src='__PUBLIC__/js/popup.js'></script>
+<script type="text/javascript">
+function mod_editFriblog(url){
+    g_pop=new Popup({ contentType:1, isReloadOnClose:false, width:390, height:450,isSupportDraging:true});
+	g_pop.setContent("title","编辑地点信息");
+    g_pop.setContent("contentUrl",url);
+    g_pop.build();
+	g_pop.show();
+	return false;
+}
+function mod_editFriblog1(url){
+    g_pop=new Popup({ contentType:1, isReloadOnClose:false, width:390, height:450,isSupportDraging:true});
+	g_pop.setContent("title","编辑地点信息");
+    g_pop.setContent("contentUrl",url);
+    g_pop.build();
+	g_pop.show();
+	return false;
+}
+function  selectStaffAll()
+{
+	var locId=document.getElementsByName("locId");
+	for(var i=0;i<locId.length; i++){
+		locId[i].checked==true?locId[i].checked=false:locId[i].checked=true;
+	}
+}
+function moredel(){
+	var locId=document.getElementsByName("locId");
+	var ary=[];
+	for(var i=0;i<locId.length;i++){
+		if(locId[i].checked==true)
+		{
+		    ary.push(locId[i].value);
+		}
+	}
+	var arr=ary.join(",");
+	if(arr==''){
+		alert("请选择一项！");
+		return;
+	}
+	else if(confirm("确定要删除吗？")){
+		var url=window.location.href="__APP__/CRM/Customer/moredelcus?locIds="+arr;
+	}	
+}
+</script>
+<body class='bodyfontsize'>
+<form action="" method="post">
+	<table class='liststyl' width="800px" cellspacing="0" cellpadding="0">
+		<tr>
+    		<td class='tabletr' colspan="10" style="font-size:14px"><b>地点列表</b></td>
+  		</tr>
+	  <tr class='tabletr'>
+		<td class="liststyltd"><input type="checkbox" id="locIds" name="locIds" onClick="return selectStaffAll()"/> <a href="#" onClick="return moredel()">删除</a>-<a href="#" onClick="mod_editFriblog('__APP__/CRM/Customer/newcustomer/src/list')">新增</a></td>
+		<td class="liststyltd">编号</td>
+		<td class="liststyltd">地点名称</td>
+		<td class="liststyltd">地点费用</td>
+		<td class="liststyltd">备注</td>
+	  </tr>
+	  <volist name='list' id='vo'>
+	  <tr>
+		<td class="liststyltd"><input type="checkbox" id="locId" name="locId" value="{$vo.id}"/>
+		<a href="#" onClick="window.open('__APP__/CRM/Customer/showonecustomer/id/{$vo.id}')">打开</a>
+		<a href="#" onClick="mod_editFriblog('__APP__/CRM/Customer/editcustomer/id/{$vo.id}')">编辑</a>
+		<td class="liststyltd">{$vo.id}</td>
+		<td class="liststyltd">{$vo.name}</td>
+		<td class="liststyltd">{$vo.free}</td>
+		<td class="liststyltd">{$vo.remark}</td>
+	   </tr>
+  </volist>
+</table>
+<div style="margin:10px 0 0 20px;">{$page}</div>
+</form>
+</body>
+</html>

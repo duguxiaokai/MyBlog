@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> <!--dtd协议-->
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>顾客列表</title>
+<link href='__PUBLIC__/Themes/yellow1/css/common.css' rel='stylesheet' type='text/css'>
+<link href="__PUBLIC__/Landz/css/global.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/Landz/css/right.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/common.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/autoform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCSSTable.js"></script>
+<script type="text/javascript" src='__PUBLIC__/js/popup.js'></script>
+<script type="text/javascript" src="__PUBLIC__/jusaas/js/MCDateTime.js"></script>
+
+
+<script type="text/javascript">
+
+ 
+var form1;
+var initData;
+var tablename;
+var mcssTable;
+var success=0;
+var modelid='test_yali';
+setInterval('countRows()',1000);
+
+//setInterval('timer()',1000);
+
+var count=30; 
+var startTime=new Date();	
+$(document).ready(function() {
+	openall(count);	
+});
+
+function timer()
+{
+	var t=new Date();
+	$("#nowtime").html(getStrDateTime(t));
+
+	if (getdatetime(t) =="2012-05-23 17:33:30")
+	{
+		//alert();
+		startTime=new Date();	
+		openall(count);	
+	}
+
+}
+function afterrun()
+{
+success++;
+$("#counter").val("成功显示表格个数："+success);
+}
+
+function openall(count)
+{
+	for(var i=0;i<count;i++)
+	{
+		var tableid="mcss_table"+i;
+		var mcssTable=new MCSSTable({tableid:tableid,modelid:modelid,pagerows:30});
+		mcssTable.run(); 
+	}
+}
+  
+function getStrDateTime(date1)
+{
+	var r="";
+	r=date1.getFullYear();
+	var m=date1.getMonth()+1;
+	var d=date1.getDate();
+	var h=date1.getHours();
+	var mi=date1.getMinutes();
+	var s=date1.getSeconds();
+	if (m<10)r+="-0"+m;else r+="-"+m;
+	if (d<10)r+="-0"+d;else r+="-"+d;
+	r+=' '+h+":"+mi+':'+s;
+	return r;
+}
+
+
+ 
+
+var lastTime;
+function countRows()
+{
+
+if (lastTime)
+	return;
+	
+var endTime=new Date();	
+$("#counter").val("已加载记录数:"+$(".mcsstable_tr1").size()*2+";已耗时："+dateDiff('S',startTime,endTime)+"秒");
+if ($(".mcsstable_tr1").size()==count*10/2)
+{
+lastTime=endTime;
+$("#counter").val("已加载记录数:"+$(".mcsstable_tr1").size()*2+";加载完毕，共耗时："+dateDiff('S',startTime,lastTime)+"秒");
+}
+}
+
+function dateDiff(interval, date1, date2)
+{
+   var objInterval = {'D':1000 * 60 * 60 * 24,'H':1000 * 60 * 60,'M':1000 * 60,'S':1000,'T':1};
+   interval = interval.toUpperCase();
+   //var dt1 = new Date();
+  // var dt2 = new Date(Date.parse(date2.replace(/-/g, '/')));
+   try
+   {
+      return Math.round((date2.getTime() - date1.getTime()) / 1000);
+    }
+    catch (e)
+    {
+      return e.message;
+    }
+}
+
+</script>
+</head>
+
+<body>
+<input id='counter' style='width:500px;' /><span id='nowtime' ></span>
+
+	<table id="mcss_table" />
+	<table id="mcss_table0" />
+	<table id="mcss_table1" />
+	<table id="mcss_table2" />
+	<table id="mcss_table3" />
+	<table id="mcss_table4" />
+	<table id="mcss_table5" />
+	<table id="mcss_table6" />
+	<table id="mcss_table7" />
+	<table id="mcss_table8" />
+	<table id="mcss_table9" />
+	<table id="mcss_table10" />
+	<table id="mcss_table11" />
+	<table id="mcss_table12" />
+	<table id="mcss_table13" />
+	<table id="mcss_table14" />
+	<table id="mcss_table15" />
+	<table id="mcss_table16" />
+	<table id="mcss_table17" />
+	<table id="mcss_table18" />
+	<table id="mcss_table19" />
+	<table id="mcss_table20" />
+
+	<table id="mcss_table21" />
+	<table id="mcss_table22" />
+	<table id="mcss_table23" />
+	<table id="mcss_table24" />
+	<table id="mcss_table25" />
+	<table id="mcss_table26" />
+	<table id="mcss_table27" />
+	<table id="mcss_table28" />
+	<table id="mcss_table29" />
+	<table id="mcss_table30" />
+	
+
+
+</body>
+</html>

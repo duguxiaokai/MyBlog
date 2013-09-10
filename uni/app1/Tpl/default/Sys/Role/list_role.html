@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href='__PUBLIC__/css/comm.css' rel='stylesheet' type='text/css'>
+<script src='__PUBLIC__/js/popup.js'></script>
+<title>职位列表</title>
+</head>
+<body class='bodyfontsize'>
+<form>
+	<table class='table' width="100%" cellspacing="0" cellpadding="10">
+  <tr>
+    <td class='tabletr' colspan="13" style="height:30px"><b style="font-size:14px">职位列表</b>&nbsp;&nbsp;
+		<select>
+			<option>更多操作</option>
+			<option>视图显示为</option>
+			<option>导出数据</option>
+			<option>打印</option>
+			<option>显示/隐藏列</option>
+		</select>
+	</td>
+  </tr>
+ <tr>
+    <td class='tabletrr' colspan="13" style="height:30px"><a href='#'>搜索</a>&nbsp;|&nbsp;过滤器
+		<select>
+			<option>-------全部------</option>
+			<option>-------1------</option>
+			<option>-------2------</option>
+		</select>
+	</td>
+  </tr>
+  <tr class='tabletr'>
+    <td>&nbsp;</td>
+    <td>职位名</td>
+    <td>所属部门</td>
+    <!-- <td>操作</td>-->
+  </tr>
+  <volist name='data' id='vo'>
+  <tr>
+    <td><a href='__APP__/SYS/Role/showonerole/id/{$vo.id}'>浏览</a>|<a href='__APP__/SYS/Role/editonerole/id/{$vo.id}'>编辑</a></td>
+    <td>{$vo.name}</td>
+    <td>{$vo.dept}</td>
+    <!--  <td><input type='button' value='订单列表'>&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' value='产品列表'></td>-->
+  </tr>
+  </volist>
+</table>
+</form>
+</body>
+</html>

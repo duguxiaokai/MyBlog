@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href='__PUBLIC__/css/common.css' rel='stylesheet' type='text/css'>
+<title>Students List</title>
+</head>
+<script src="__PUBLIC__/js/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+function  selectstuAll()
+{
+	var stuid=document.getElementsByName("stuid");
+	for(var i=0;i<stuid.length; i++){
+		stuid[i].checked==true?stuid[i].checked=false:stuid[i].checked=true;
+	}
+}
+function getstuAll(){
+	var stuid=document.getElementsByName("stuid");
+	var stuname=document.getElementsByName("stuname");
+	var ary=[];
+	var aryame=[];
+	for(var i=0;i<stuid.length;i++){
+		if(stuid[i].checked==true){
+			ary.push(stuid[i].value);
+			aryame.push(stuname[i].value);
+		}
+	}
+	var arr=ary.join(",");
+	var stuname=aryame.join(",");
+	if(arr==''){
+		alert("Please select！");
+		return;
+	}
+	else{
+		 window.parent.inputfromPopup(arr,stuname); 
+	}
+}
+</script>
+<body class='bodyfontsize'>
+<div id="pageheader">
+<form id="dataform" method="post" action="" enctype="multipart/form-data">
+	<input type="button" value="Submit" onClick="return getstuAll()">
+	<table class='liststyl' width="300px" cellspacing="0" cellpadding="0">
+		<tr>
+    		<td class='tabletr' colspan="2" style="font-size:14px"><b>Students List</b></td>
+  		</tr>
+	  <tr class='tabletr'>
+		<td class="liststyltd" width="10px"><input type="checkbox" id="studentids" name="studentids" onClick="return selectstuAll()"/></td>
+		<td class="liststyltd">Students Name</td>
+		
+	  </tr>
+	   <volist name='stu' id='vo'>
+	  <tr>
+		<td class="liststyltd" width="10px"><input type="checkbox" id="stuid" name="stuid" value="{$vo.id}"/>
+		<td class="liststyltd">{$vo.name}</td>
+		<input type="hidden" id="stuname" name="stuname" value="{$vo.name}"/>
+	   </tr>
+	 </volist>
+</table>
+	<input type="button" value="Submit" onClick="return getstuAll()">
+	
+</form>
+</div>	
+</body>
+</html>

@@ -1,0 +1,28 @@
+<?php return array(
+'id'=>"oa_project_reportcustomer",
+'title'=>"项目周报",
+'tablename'=>"oa_project_report",
+'openurl'=>"Oa/Project/viewProjectReport",
+'filter'=>"projectid in (select id from oa_project where custid = loginuser_customer_id()) ",
+'groupby'=>"y",
+'open_window_style'=>"newwindow",
+'actions'=>"open,search,groupby,page",
+'fields'=>array(
+ array('id'=>"id",'name'=>"ID",'fieldtype'=>"int",'isvisible'=>"false",'visibleWhenAdd'=>"false",),
+ array('id'=>"projectid",'name'=>"项目",'type'=>"dropdown",'data'=>"sql:select id,name from oa_project",'visibleWhenAdd'=>"false",'forsearch'=>"true",),
+ array('id'=>"periodid",'name'=>"周次",'fieldtype'=>"int",'type'=>"dropdown",'data'=>"sql:select id,name from oa_pm_period where type='costinput' order by id desc ",'isvisible'=>"false",),
+ array('id'=>"periodname",'name'=>"周次",'visibleWhenAdd'=>"false",),
+ array('id'=>"manager",'name'=>"项目经理",'fieldtype'=>"string",'forsearch'=>"true",),
+ array('id'=>"begindate",'name'=>"开始日期",'fieldtype'=>"date",'type'=>"date",),
+ array('id'=>"enddate",'name'=>"结束日期",'fieldtype'=>"date",'type'=>"date",),
+ array('id'=>"finishper",'name'=>"完成进度",'fieldtype'=>"string",),
+ array('id'=>"projectenddate",'name'=>"预计结束日期",'fieldtype'=>"date",'type'=>"date",),
+ array('id'=>"summary",'name'=>"本周概述",'fieldtype'=>"string",'type'=>"textarea",'isvisible'=>"false",),
+ array('id'=>"SYS_ORGID",'name'=>"组织ID",'fieldtype'=>"int",'type'=>"SYS_ORGID",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"SYS_ADDUSER",'name'=>"创建者",'fieldtype'=>"string",'type'=>"SYS_ADDUSER",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"SYS_ADDTIME",'name'=>"创建时间",'fieldtype'=>"datetime",'type'=>"SYS_ADDTIME",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"SYS_EDITUSER",'name'=>"更新者",'fieldtype'=>"string",'type'=>"SYS_EDITUSER",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+ array('id'=>"SYS_EDITTIME",'name'=>"更新时间",'fieldtype'=>"datetime",'type'=>"SYS_EDITTIME",'isvisible'=>"false",'visibleWhenAdd'=>"false",'readonly'=>"true",),
+),
+
+) ?>

@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=8">
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <title></title>
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/plugins/ueditor/themes/default/ueditor.css"/> 
+	<!--<link rel="stylesheet" type="text/css" href="__PUBLIC__/jusaas/baidueditor/themes/default/ueditor.css"/> -->
+
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/common.css" />	
+	<script src="__PUBLIC__/jusaas/js/common.js"></script>
+ 	<script src="__PUBLIC__/jusaas/js/jquery.js"></script>
+<!--
+	<script src="__PUBLIC__/jusaas/baidueditor/editor_config.js"></script>
+	<script src="__PUBLIC__/jusaas/baidueditor/editor_ui_all.js"></script>
+-->
+	<script src="__PUBLIC__/plugins/ueditor/editor_config.js"></script>
+	<script src="__PUBLIC__/plugins/ueditor/editor_all.js"></script>
+	<script src="__PUBLIC__/plugins/ueditor/editor_api.js"></script>
+
+</head>
+<body>
+<span><strong>文本编辑器</strong></span>
+<input type='button' class='formbutton' value='确认并返回' onclick='savetosrc();'>
+<div id="editor1">
+</div>
+
+</body>
+</html>
+<script >
+
+	var url=location.href;
+	var baidueditor = getCookie('baidueditor');
+
+	var srcobj=getParamValue(url,"srcobj");//来源窗口中的DIV的id
+	var srobj= window.opener.document.getElementById(srcobj);
+	var initContent='';
+	if (srobj)
+		initContent=srobj.innerHTML;
+    var readvalue=getParamValue(url,"readvalue");//来源窗口中的readonly的值
+	
+	//	var editor = new baidu.editor.ui.Editor({initialContent:s});
+	//	editor.render('editor1');
+	
+	//新版本
+	var editorOption = {
+            //这里可以选择自己需要的工具按钮名称,此处仅选择如下五个
+           // toolbars:[['FullScreen', 'Source', 'Undo', 'Redo','Bold','|', 'InsertImage', 'Emotion', 'InsertVideo', 'Attachment', 'Map', 'GMap', 'InsertFrame', 'PageBreak', 'HighlightCode', '|',
+             //   'Horizontal', 'Date', 'Time', 'Spechars','SnapScreen', 'WordImage' ]],
+            //focus时自动清空初始化时的内容
+            autoClearinitialContent:false,
+            //关闭字数统计
+            wordCount:false,
+            //关闭elementPath
+            elementPathEnabled:false,
+			initialContent:initContent,
+            //更多其他参数，请参考editor_config.js中的配置项
+        };
+        var editor = new baidu.editor.ui.Editor(editorOption);
+        editor.render( 'editor1' );
+	
+		
+	
+	if(readvalue=="true")// 如果为只读,编辑器不可编辑
+	{  
+	   editor.body.contentEditable = false;
+	   editor.body.onFocus=alert("当前文本处于只读状态,不可编辑");
+	}
+	
+function savetosrc()
+{  
+	var s=editor.getContent();
+	if(window.opener!==null)
+	{
+		window.opener.document.getElementById(srcobj).innerHTML = s;
+		window.close();
+	}
+	else
+	{
+	  alert(" 父窗口已关闭,请手动关闭当前窗口");  
+	}
+}
+	
+
+
+	
+	
+
+</script>
